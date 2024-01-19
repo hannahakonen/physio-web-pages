@@ -1,14 +1,20 @@
 const mongoose = require('mongoose')
 
-if (process.argv.length<3) {
+if (process.argv.length < 3) {
   console.log('give password as argument')
   process.exit(1)
 }
 
 const password = process.argv[2]
 
+//testPhysioApp is the name of the database
 const url =
-  `mongodb+srv://johannahakonen:${password}@physio.efefq.mongodb.net/physioApp?retryWrites=true&w=majority`
+    `mongodb+srv://johannahakonen:${password}@physio.efefq.mongodb.net/testPhysioApp?retryWrites=true&w=majority`
+
+//physioApp is the name of the database
+//const url =
+//  `mongodb+srv://johannahakonen:${password}@physio.efefq.mongodb.net/physioApp?retryWrites=true&w=majority`
+
 mongoose.set('strictQuery', false)
 mongoose.connect(url)
 
@@ -20,19 +26,20 @@ const noteSchema = new mongoose.Schema({
 const Note = mongoose.model('Note', noteSchema)
 
 const note = new Note({
-  content: 'GET and POST are the most important methods of HTTP protocol',
+  content: 'plop plop plop',
   important: true,
 })
 
 /*
 note.save().then(result => {
-  console.log('note saved!')
-  mongoose.connection.close()
+    console.log('note saved!')
+    mongoose.connection.close()
 })
 */
+
 Note.find({}).then(result => {
-    result.forEach(note => {
-      console.log(note)
-    })
-    mongoose.connection.close()
+  result.forEach(note => {
+    console.log(note)
   })
+  mongoose.connection.close()
+})

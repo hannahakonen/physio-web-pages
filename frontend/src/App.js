@@ -67,14 +67,16 @@ const App = (props) => {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Notes</h1>
+        <h1>Physio!</h1>
+
         <Notification message={errorMessage} />
         <div>
+          <p>Test Content: Notes</p>
           <button onClick={() => setShowAll(!showAll)}>
             show {showAll ? 'important' : 'all'}
           </button>
         </div>
-        <ul>
+        <ul className="Notes-list">
           {notesToShow.map(note =>
             <Note key={note.id} note={note} toggleImportance={() => toggleImportanceOf(note.id)} />
           )}
@@ -83,6 +85,7 @@ const App = (props) => {
           <input value={newNote} onChange={handleNoteChange} />
           <button type="submit">save</button>
         </form>
+
       </header>
       <Footer />
     </div>

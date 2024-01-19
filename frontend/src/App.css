@@ -24,6 +24,11 @@
   color: white;
 }
 
+.Notes-list {
+  text-align: left;
+  font-size: 13px;
+}
+
 .App-link {
   color: #61dafb;
 }

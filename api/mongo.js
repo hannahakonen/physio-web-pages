@@ -110,7 +110,7 @@ user.save().then(result => {
 })
 */
 
-
+/*
 const userId = '65affaa8e44acd2968c22c4d' // replace with the actual user id
 const noteId = '65ae29fd67fc19ecbb6fe100' // replace with the actual note id
 
@@ -133,7 +133,7 @@ User.findById(userId)
       })
   })
   .catch(err => console.log(err))
-
+*/
 
 /*
 Note.find({}).then(result => {
@@ -143,3 +143,26 @@ Note.find({}).then(result => {
   mongoose.connection.close()
 })
 */
+
+// change the password of the user
+const bcrypt = require('bcrypt')
+const saltRounds = 10 // or whatever value you want
+
+const username = 'katijo' // replace with the actual username
+const newPassword = 'salainen' // replace with the actual new password
+
+// Hash the new password
+bcrypt.hash(newPassword, saltRounds)
+  .then(newPasswordHash => {
+    // Find the user and update their password
+    User.findOneAndUpdate(
+      { username: username },
+      { passwordHash: newPasswordHash },
+      { new: true } // this option returns the updated document
+    )
+      .then(updatedUser => {
+        console.log('User password updated!')
+        mongoose.connection.close()
+      })
+  })
+  .catch(err => console.log(err))

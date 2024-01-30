@@ -8,7 +8,7 @@ const Footer = () => {
   return (
     <div style={footerStyle}>
       <br />
-      <span>&copy; 2023 Johanna Hakonen</span>
+      <span>&copy; 2024 Johanna Hakonen</span>
     </div>
   )
 }

@@ -1,14 +1,18 @@
 import './App.css'
 import { useState, useEffect, useRef } from 'react'
+import Home from './components/Home'
+import Booking from './components/Booking'
 import Note from './components/Note'
 import Notification from './components/Notification'
 import Footer from './components/Footer'
 import Togglable from './components/Togglable'
 import NoteForm from './components/NoteForm'
-import LoginForm from './components/LoginForm'
+import Login from './components/LoginForm'
 import noteService from './services/notes'
 import loginService from './services/login'
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import PropTypes from 'prop-types'
 
 const App = (props) => {
   const [notes, setNotes] = useState([])
@@ -66,6 +70,10 @@ const App = (props) => {
       })
   }
 
+  const login = (user) => {
+    setUser(user)
+  }
+  /*
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
@@ -81,29 +89,14 @@ const App = (props) => {
       setUser(user)
       setUsername('')
       setPassword('')
+      navigate('/')
     } catch (exception) {
       setErrorMessage('wrong credentials')
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
     }
-  }
-
-  const Home = () => (
-    <div className="App">
-      <header className="App-header">
-        <h1>Physio!</h1>
-      </header>
-    </div>
-  )
-
-  const Ajanvaraus = () => (
-    <div className="App">
-      <header className="App-header">
-        <h1>Ajanvaraus</h1>
-      </header>
-    </div>
-  )
+  }*/
 
   const Notes = () => (
     <div className="App">
@@ -113,7 +106,7 @@ const App = (props) => {
         <div>
           <h1>Notes</h1>
 
-          {!user && loginForm()}
+          {/*!user && loginForm()*/}
 
           {user && <div>
             <p>{user.name} logged in</p>
@@ -123,7 +116,7 @@ const App = (props) => {
           }
 
           <button onClick={() => setShowAll(!showAll)}>
-          show {showAll ? 'important' : 'all'}
+            show {showAll ? 'important' : 'all'}
           </button>
         </div>
         <ul className="Notes-list">
@@ -131,14 +124,15 @@ const App = (props) => {
             <Note key={note.id} note={note} toggleImportance={() => toggleImportanceOf(note.id)} />
           )}
         </ul>
-
       </header>
     </div>
   )
 
+  // not in use
+  /*
   const loginForm = () => (
     <Togglable buttonLabel='login'>
-      <LoginForm
+      <Login
         username={username}
         password={password}
         handleUsernameChange={({ target }) => setUsername(target.value)}
@@ -146,7 +140,7 @@ const App = (props) => {
         handleSubmit={handleLogin}
       />
     </Togglable>
-  )
+  )*/
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedNoteappUser')
@@ -174,12 +168,22 @@ const App = (props) => {
         <Link style={padding} to="/">Koti</Link>
         <Link style={padding} to="/ajanvaraus">Ajanvaraus</Link>
         <Link style={padding} to="/notes">Notes</Link>
+        {user
+          ? (
+            <>
+              <em>{user.name} logged in</em>
+              <Link style={padding} to="/" onClick={handleLogout}>Logout</Link>
+            </>
+          )
+          : <Link style={padding} to="/login">Login</Link>
+        }
       </div>
 
       <Routes>
-        <Route path="/ajanvaraus" element={<Ajanvaraus />} />
+        <Route path="/ajanvaraus" element={<Booking />} />
         <Route path="/notes" element={<Notes />} />
         <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login onLogin={login} />} />
       </Routes>
 
       <div className="App">

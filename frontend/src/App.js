@@ -11,6 +11,7 @@ import Login from './components/LoginForm'
 import noteService from './services/notes'
 import loginService from './services/login'
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import Notes from './components/Notes'
 import { useNavigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
@@ -24,15 +25,6 @@ const App = (props) => {
   const [loginVisible, setLoginVisible] = useState(false)
 
   useEffect(() => {
-    noteService
-      .getAll()
-      .then(initialNotes => {
-        setNotes(initialNotes)
-      })
-  }, [])
-  console.log('render', notes.length, 'notes')
-
-  useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
@@ -41,80 +33,15 @@ const App = (props) => {
     }
   }, [])
 
-  const addNote = (noteObject) => {
-    noteFormRef.current.toggleVisibility()
-    noteService
-      .create(noteObject)
-      .then(returnedNote => {
-        setNotes(notes.concat(returnedNote))
-      })
-  }
-
-  const toggleImportanceOf = id => {
-    const note = notes.find(n => n.id === id)
-    const changedNote = { ...note, important: !note.important }
-
-    noteService
-      .update(id, changedNote)
-      .then(returnedNote => {
-        setNotes(notes.map(note => note.id !== id ? note : returnedNote))
-      })
-      .catch(error => {
-        setErrorMessage(
-          `Note '${note.content}' was already removed from server`
-        )
-        setTimeout(() => {
-          setErrorMessage(null)
-        }, 5000)
-        setNotes(notes.filter(n => n.id !== id))
-      })
-  }
-
   const login = (user) => {
     setUser(user)
   }
-
-  const Notes = () => (
-    <div className="App">
-      <header className="App-header">
-
-        <Notification message={errorMessage} />
-        <div>
-          <h1>Notes</h1>
-
-          {user && <div>
-            {noteForm()}
-          </div>
-          }
-
-          <button onClick={() => setShowAll(!showAll)}>
-            show {showAll ? 'important' : 'all'}
-          </button>
-        </div>
-        <ul className="Notes-list">
-          {notesToShow.map(note =>
-            <Note key={note.id} note={note} toggleImportance={() => toggleImportanceOf(note.id)} />
-          )}
-        </ul>
-      </header>
-    </div>
-  )
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedNoteappUser')
     loginService.setToken(null)
     setUser(null)
   }
-
-  const noteForm = () => (
-    <Togglable buttonLabel="new note" ref={noteFormRef}>
-      <NoteForm createNote={addNote} />
-    </Togglable>
-  )
-
-  const notesToShow = showAll ? notes : notes.filter(note => note.important)
-
-  const noteFormRef = useRef()
 
   const padding = {
     padding: 5
@@ -139,7 +66,7 @@ const App = (props) => {
 
       <Routes>
         <Route path="/ajanvaraus" element={<Booking />} />
-        <Route path="/notes" element={<Notes />} />
+        <Route path="/notes" element={<Notes user={user} />} />
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login onLogin={login} />} />
       </Routes>

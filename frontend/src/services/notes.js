@@ -1,11 +1,14 @@
 import axios from 'axios'
+import loginService from './login'
 const baseUrl = '/api/notes'
 
+/*
 let token = null
 
 const setToken = newToken => {
   token = `Bearer ${newToken}`
 }
+*/
 
 const getAll = () => {
   const request = axios.get(baseUrl)
@@ -26,7 +29,7 @@ const getAll = () => {
 
 const create = async newObject => {
   const config = {
-    headers: { Authorization: token },
+    headers: { Authorization: loginService.getToken() },
   }
 
   const response = await axios.post(baseUrl, newObject, config)
@@ -38,4 +41,4 @@ const update = (id, newObject) => {
   return request.then(response => response.data)
 }
 
-export default { getAll, create, update, setToken }
+export default { getAll, create, update, /*setToken*/ }

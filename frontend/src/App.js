@@ -37,7 +37,7 @@ const App = (props) => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
-      noteService.setToken(user.token)
+      loginService.setToken(user.token)
     }
   }, [])
 
@@ -73,30 +73,6 @@ const App = (props) => {
   const login = (user) => {
     setUser(user)
   }
-  /*
-  const handleLogin = async (event) => {
-    event.preventDefault()
-    try {
-      const user = await loginService.login({
-        username, password,
-      })
-
-      window.localStorage.setItem(
-        'loggedNoteappUser', JSON.stringify(user)
-      )
-
-      noteService.setToken(user.token)
-      setUser(user)
-      setUsername('')
-      setPassword('')
-      navigate('/')
-    } catch (exception) {
-      setErrorMessage('wrong credentials')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
-    }
-  }*/
 
   const Notes = () => (
     <div className="App">
@@ -106,11 +82,7 @@ const App = (props) => {
         <div>
           <h1>Notes</h1>
 
-          {/*!user && loginForm()*/}
-
           {user && <div>
-            <p>{user.name} logged in</p>
-            <button onClick={handleLogout}>Logout</button>
             {noteForm()}
           </div>
           }
@@ -128,23 +100,9 @@ const App = (props) => {
     </div>
   )
 
-  // not in use
-  /*
-  const loginForm = () => (
-    <Togglable buttonLabel='login'>
-      <Login
-        username={username}
-        password={password}
-        handleUsernameChange={({ target }) => setUsername(target.value)}
-        handlePasswordChange={({ target }) => setPassword(target.value)}
-        handleSubmit={handleLogin}
-      />
-    </Togglable>
-  )*/
-
   const handleLogout = () => {
     window.localStorage.removeItem('loggedNoteappUser')
-    noteService.setToken(null)
+    loginService.setToken(null)
     setUser(null)
   }
 
@@ -163,7 +121,7 @@ const App = (props) => {
   }
 
   return (
-    <Router>
+    <div>
       <div>
         <Link style={padding} to="/">Koti</Link>
         <Link style={padding} to="/ajanvaraus">Ajanvaraus</Link>
@@ -189,7 +147,7 @@ const App = (props) => {
       <div className="App">
         <Footer />
       </div>
-    </Router>
+    </div>
   )
 }
 

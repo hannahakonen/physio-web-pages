@@ -4,11 +4,13 @@ import { useNavigate } from 'react-router-dom'
 import loginService from '../services/login'
 import noteService from '../services/notes'
 import { useState, useEffect, useRef } from 'react'
+import Notification from './Notification'
 
 const Login = (props) => {
   const navigate = useNavigate()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
 
   const onSubmit = async (event) => {
     event.preventDefault()
@@ -21,22 +23,23 @@ const Login = (props) => {
         'loggedNoteappUser', JSON.stringify(user)
       )
 
-      noteService.setToken(user.token)
+      loginService.setToken(user.token)  // is this necessary?
       //setUser(user)
       props.onLogin(user)
       setUsername('')
       setPassword('')
       navigate('/')
     } catch (exception) {
-      //setErrorMessage('wrong credentials')
-      //setTimeout(() => {
-      //  setErrorMessage(null)
-      //}, 5000)
+      setErrorMessage('wrong credentials')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
     }
   }
   return (
     <div className="App">
       <header className="App-header">
+        <Notification message={errorMessage} />
         <h2>Login</h2>
 
         <form onSubmit={onSubmit}>

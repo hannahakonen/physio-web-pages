@@ -14,6 +14,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import Notes from './components/Notes'
 import { useNavigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
+import Calendar from './components/Calendar'
 
 const App = (props) => {
   const [notes, setNotes] = useState([])

@@ -44,12 +44,7 @@ const Booking = () => {
     <div className="App-header">
       {step === 0 && <ServiceTypeSelection onSelect={handleServiceTypeSelection} />}
       {step === 1 && <ServiceSelection onSelect={handleServiceSelection} serviceType={serviceType} onBack={handleBack} />}
-      {step === 2 && (
-        <div>
-          <TimeSelection onSelect={handleTimeSelection} onBackTwo={handleBackTwo} />
-          <Calendar />
-        </div>
-      )}
+      {step === 2 && <Calendar onSelect={handleTimeSelection} onBackTwo={handleBackTwo} />}
       {step === 3 && <CustomerInfo onSubmit={handleCustomerInfoSubmission} onBack={handleBack} onBackThree={handleBackThree} />}
       {step === 4 && <BookingCompleted onBackThree={handleBackThree} />}
     </div>
@@ -60,6 +55,7 @@ const ServiceTypeSelection = ({ onSelect }) => {
   const serviceTypes = ['Fysioterapia', 'Klassinen hieronta', 'Kuumakivihieronta']
 
   // DO: Aika button not disabled if at least one service selected
+  // DO: Move links to booking?
   return (
     <div>
       <button>Palvelu</button>
@@ -100,27 +96,6 @@ const ServiceSelection = ({ onSelect, serviceType, onBack }) => {
       {services.map(service => (
         <button key={service} onClick={() => onSelect(service)}>
           {service}
-        </button>
-      ))}
-    </div>
-  )
-}
-
-const TimeSelection = ({ onSelect, onBackTwo }) => {
-  // For simplicity, just use a static list of times
-  const times = ['9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00']
-
-  // DO: Tiedot button not disabled if at least one time selected
-  return (
-    <div>
-      <button onClick={onBackTwo}>Palvelu</button>
-      <button>Aika</button>
-      <button disabled>Tiedot</button>
-      <button disabled>Valmis</button>
-      <h1>Select a Time</h1>
-      {times.map(time => (
-        <button key={time} onClick={() => onSelect(time)}>
-          {time}
         </button>
       ))}
     </div>

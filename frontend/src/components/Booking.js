@@ -6,6 +6,7 @@ const Booking = () => {
   const [serviceType, setServiceType] = useState(null)
   const [service, setService] = useState(null)
   const [time, setTime] = useState(null)
+  const [worker, setWorker] = useState(null)
 
   const handleServiceTypeSelection = selectedServiceType => {
     setServiceType(selectedServiceType)
@@ -22,6 +23,10 @@ const Booking = () => {
     setStep(3)
   }
 
+  const handleWorkerSelection = selectedWorker => {
+    setWorker(selectedWorker)
+  }
+
   const handleBack = () => {
     setStep(step - 1)
   }
@@ -34,9 +39,12 @@ const Booking = () => {
     setStep(step - 3)
   }
 
+  // TO DO: save to DB bookings
+  // TO DO: if saving to DB succeeds:
+  // TO DO: send email to customer and worker
   const handleCustomerInfoSubmission = () => {
     // Handle the submission of the customer's information
-    console.log('Booking completed:', { service, time })
+    console.log('Booking completed:', { service, time, worker })
     setStep(4)
   }
 
@@ -44,7 +52,7 @@ const Booking = () => {
     <div className="App-header">
       {step === 0 && <ServiceTypeSelection onSelect={handleServiceTypeSelection} />}
       {step === 1 && <ServiceSelection onSelect={handleServiceSelection} serviceType={serviceType} onBack={handleBack} />}
-      {step === 2 && <Calendar onSelect={handleTimeSelection} onBackTwo={handleBackTwo} />}
+      {step === 2 && <Calendar onSelect={handleTimeSelection} onWorkerSelect={handleWorkerSelection} onBackTwo={handleBackTwo} />}
       {step === 3 && <CustomerInfo onSubmit={handleCustomerInfoSubmission} onBack={handleBack} onBackThree={handleBackThree} />}
       {step === 4 && <BookingCompleted onBackThree={handleBackThree} />}
     </div>

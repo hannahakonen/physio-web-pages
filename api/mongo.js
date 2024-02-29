@@ -20,13 +20,76 @@ const url =
 mongoose.set('strictQuery', false)
 mongoose.connect(url)
 
-/*
-const noteSchema = new mongoose.Schema({
-  content: String,
-  important: Boolean,
+const worktimeSchema = new mongoose.Schema({
+  start: Date,
+  end: Date,
+  worker: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }
 })
+
+const Worktime = mongoose.model('Worktime', worktimeSchema)
+const startTime = new Date(2024, 2, 1, 14, 0)
+const endTime = new Date(2024, 2, 1, 18, 45)
+
+const newTime = new Worktime({
+  start: startTime,
+  end: endTime,
+  worker: '65affaa8e44acd2968c22c4d'
+})
+
+newTime.save()
+  .then(() => {
+    console.log('New time saved successfully!')
+    mongoose.connection.close()
+  })
+  .catch(err => console.log(err))
+
+// Adding a new booking to the database
+/*
+const bookingSchema = new mongoose.Schema({
+  type: String,
+  services: [String],
+  start: Date,
+  end: Date,
+  worker: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  customer: {
+    firstName: String,
+    lastName: String,
+    email: String
+  }
+})
+
+const Booking = mongoose.model('Booking', bookingSchema)
+const startTime = new Date(2024, 1, 30, 16, 30)
+const endTime = new Date(2024, 1, 30, 17, 30)
+
+const newTime = new Booking({
+  type: 'Klassinen hieronta',
+  services: ['Klassinen hieronta 60 min'],
+  start: startTime,
+  end: endTime,
+  worker: '65affaa8e44acd2968c22c4d',
+  customer: {
+    firstName: 'Maija',
+    lastName: 'Meikalainen',
+    email: 'maija.meikalainen@gmail.com'
+  }
+})
+
+newTime.save()
+  .then(() => {
+    console.log('New time saved successfully!')
+    mongoose.connection.close()
+  })
+  .catch(err => console.log(err))
 */
 
+/*
 const noteSchema = new mongoose.Schema({
   content: {
     type: String,
@@ -40,7 +103,6 @@ const noteSchema = new mongoose.Schema({
   }
 })
 
-/*
 const Note = mongoose.model('Note', noteSchema)
 
 const note = new Note({
@@ -144,6 +206,7 @@ Note.find({}).then(result => {
 })
 */
 
+/*
 // change the password of the user
 const bcrypt = require('bcrypt')
 const saltRounds = 10 // or whatever value you want
@@ -166,3 +229,4 @@ bcrypt.hash(newPassword, saltRounds)
       })
   })
   .catch(err => console.log(err))
+  */

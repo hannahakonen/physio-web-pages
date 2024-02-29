@@ -31,7 +31,7 @@ const Calendar = ({ onSelect, onWorkerSelect, onBackTwo }) => {
     bookingService
       .getAll()
       .then(initialBookings => {
-        setBookings(initialBookings)
+        setWorktimes(initialBookings)
       })
   }, [])
 
@@ -144,8 +144,8 @@ const Day = ({ date, worktimes, bookings }) => {
     const startDate = new Date(worktime.start)
     return startDate.getDate() === date.getDate() && startDate.getMonth() === date.getMonth()
   })
-  let startTime = worktime ? new Date(worktime.start) : null
-  let endTime = worktime ? new Date(worktime.end) : null
+  let startTime = worktime ? new Date(worktime.start) : new Date(date)
+  let endTime = worktime ? new Date(worktime.end) : new Date(date)
   /*
   let startTime = new Date(date)
   startTime.setHours(14, 0, 0, 0)
@@ -157,22 +157,22 @@ const Day = ({ date, worktimes, bookings }) => {
   */
 
   // TO DO: this from DB
-  // REMEMBER TO CHANGE THE DURATION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  let serviceDuration = 60 / 60
+  // REMEMBER TO CHANGE THE DURATION
+  let serviceDuration = 30 / 60
   let breakDuration = 15 / 60
 
   const bookingList = bookings.filter(booking => {
     const startDate = new Date(booking.start)
     return startDate.getDate() === date.getDate() && startDate.getMonth() === date.getMonth()
   })
-
+  /*
   let bookingTimes = bookingList.map(booking => ({
-    start: new Date(booking.start),
-    end: new Date(booking.end)
+    start: booking.start,
+    end: booking.end
   }))
   console.log(bookingTimes)
+  */
 
-  /*
   let bookingStartFirst = new Date(date)
   bookingStartFirst.setHours(15, 30, 0, 0)
 
@@ -191,13 +191,13 @@ const Day = ({ date, worktimes, bookings }) => {
   let bookingEndThird = new Date(date)
   bookingEndThird.setHours(18, 0, 0, 0)
 
-  //let bookings = [{ start: bookingStartFirst, end: bookingEndFirst }]
+  //let bookingTimes = [{ start: bookingStartFirst, end: bookingEndFirst }]
   let bookingTimes = [{ start: bookingStartFirst, end: bookingEndFirst },
     { start: bookingStartSecond, end: bookingEndSecond },
     { start: bookingStartThird, end: bookingEndThird }]
 
-  //let bookings = []
-  */
+  //let bookingTimes = []
+
   function calculateAvailableSlots(startTime, endTime, serviceDuration, breakDuration, bookingTimes) {
     // Convert the times to minutes
     let start = startTime.getHours() * 60 + startTime.getMinutes()
@@ -277,11 +277,9 @@ const Day = ({ date, worktimes, bookings }) => {
     return slots
   }
 
-  let slots = []
 
-  if (worktime) {
-    slots = calculateAvailableSlots(startTime, endTime, serviceDuration, breakDuration, bookingTimes)
-  }
+  let slots = calculateAvailableSlots(startTime, endTime, serviceDuration, breakDuration, bookingTimes)
+
   // Print the slots
   slots.forEach(slot => {
     console.log(slot)

@@ -157,7 +157,7 @@ const Day = ({ date, worktimes, bookings }) => {
   */
 
   // TO DO: this from DB
-  // REMEMBER TO CHANGE THE DURATION
+  // REMEMBER TO CHANGE THE DURATION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   let serviceDuration = 30 / 60
   let breakDuration = 15 / 60
 

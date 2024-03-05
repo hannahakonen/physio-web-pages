@@ -20,6 +20,55 @@ const url =
 mongoose.set('strictQuery', false)
 mongoose.connect(url)
 
+// Adding a new service to the database
+const serviceSchema = new mongoose.Schema({
+  type: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  name: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  description: String,
+  duration: {
+    type: Number,
+    required: true,
+    min: 0
+  },
+  price: {
+    type: Number,
+    required: true,
+    min: 0
+  },
+  worker: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }
+})
+
+const Service = mongoose.model('Service', serviceSchema)
+
+const newService = new Service({
+  type: 'Urheiluhieronta',
+  name: 'Urheiluhieronta 60 min',
+  description: 'Urheiluhieronta on klassista hierontaa voimakkaampi hieronta, jossa käsitellään enemmän faskioita/lihaskalvoja sekä keskitytään ongelma-alueiden avaamiseen. Hieronta mm. lievittää lihas- ja nivelkipuja, vapauttaa kalvoja ja avaa kehon tukkeumia.',
+  duration: 60,
+  price: 66,
+  worker: '65affaa8e44acd2968c22c4d'
+})
+
+newService.save()
+  .then(() => {
+    console.log('New service saved successfully!')
+    mongoose.connection.close()
+  })
+  .catch(err => console.log(err))
+
+// Adding a new worktime to the database
+/*
 const worktimeSchema = new mongoose.Schema({
   start: Date,
   end: Date,
@@ -45,6 +94,7 @@ newTime.save()
     mongoose.connection.close()
   })
   .catch(err => console.log(err))
+*/
 
 // Adding a new booking to the database
 /*

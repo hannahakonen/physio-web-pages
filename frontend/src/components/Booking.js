@@ -1,12 +1,21 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Calendar from './Calendar'
+import serviceService from '../services/services'
 
 const Booking = () => {
   const [step, setStep] = useState(0)
   const [serviceType, setServiceType] = useState(null)
+  const [serviceTypes, setServiceTypes] = useState([])
   const [service, setService] = useState(null)
   const [time, setTime] = useState(null)
   const [worker, setWorker] = useState(null)
+
+  useEffect(() => {
+    serviceService.getAllTypes()
+      .then(initialServiceTypes => {
+        setServiceTypes(initialServiceTypes)
+      })
+  }, [])
 
   const handleServiceTypeSelection = selectedServiceType => {
     setServiceType(selectedServiceType)
@@ -50,7 +59,7 @@ const Booking = () => {
 
   return (
     <div className="App-header">
-      {step === 0 && <ServiceTypeSelection onSelect={handleServiceTypeSelection} />}
+      {step === 0 && <ServiceTypeSelection serviceTypes={serviceTypes} onSelect={handleServiceTypeSelection} />}
       {step === 1 && <ServiceSelection onSelect={handleServiceSelection} serviceType={serviceType} onBack={handleBack} />}
       {step === 2 && <Calendar onSelect={handleTimeSelection} onWorkerSelect={handleWorkerSelection} onBackTwo={handleBackTwo} />}
       {step === 3 && <CustomerInfo onSubmit={handleCustomerInfoSubmission} onBack={handleBack} onBackThree={handleBackThree} />}
@@ -59,8 +68,8 @@ const Booking = () => {
   )
 }
 
-const ServiceTypeSelection = ({ onSelect }) => {
-  const serviceTypes = ['Fysioterapia', 'Klassinen hieronta', 'Kuumakivihieronta']
+const ServiceTypeSelection = ({ serviceTypes, onSelect }) => {
+  //const serviceTypes = ['Fysioterapia', 'Klassinen hieronta', 'Kuumakivihieronta']
 
   // DO: Aika button not disabled if at least one service selected
   // DO: Move links to booking?
@@ -81,6 +90,8 @@ const ServiceTypeSelection = ({ onSelect }) => {
 }
 
 const ServiceSelection = ({ onSelect, serviceType, onBack }) => {
+  const [serviceNames, setServiceNames] = useState([])
+  /*
   let services = []
   if (serviceType === 'Fysioterapia') {
     services = ['Fysioterapia 60 min']
@@ -89,7 +100,17 @@ const ServiceSelection = ({ onSelect, serviceType, onBack }) => {
   } else if (serviceType === 'Kuumakivihieronta') {
     services = ['Kuumakivihieronta 60 min']
   }
+  */
+  useEffect(() => {
+    serviceService.getServicesByType(serviceType)
+      .then(initialServiceNames => {
+        setServiceNames(initialServiceNames)
+      })
+  }, [serviceType])
 
+  const handleSelect = (name) => {
+    onSelect(name)
+  }
   // DO: Aika button not disabled if at least one service selected
   return (
     <div>
@@ -99,11 +120,11 @@ const ServiceSelection = ({ onSelect, serviceType, onBack }) => {
       <button disabled>Valmis</button>
       <h1>Select a Service</h1>
       <div>
-        <button onClick={onBack} disabled>Valitse lisää palveluita</button>
+        <button onClick={onBack}>Valitse lisää palveluita</button>
       </div>
-      {services.map(service => (
-        <button key={service} onClick={() => onSelect(service)}>
-          {service}
+      {serviceNames.map(name => (
+        <button key={name} onClick={() => handleSelect(name)}>
+          {name}
         </button>
       ))}
     </div>

@@ -1,29 +1,42 @@
 import React, { useEffect, useState } from 'react'
 import Calendar from './Calendar'
 import serviceService from '../services/services'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import CancelIcon from '@mui/icons-material/Cancel'
+
 
 const Booking = () => {
   const [step, setStep] = useState(0)
   const [serviceType, setServiceType] = useState(null)
-  const [serviceTypes, setServiceTypes] = useState([])
   const [service, setService] = useState(null)
+  const [selectedServices, setSelectedServices] = useState([])
+  const [price, setPrice] = useState(null)
   const [time, setTime] = useState(null)
   const [worker, setWorker] = useState(null)
-
-  useEffect(() => {
-    serviceService.getAllTypes()
-      .then(initialServiceTypes => {
-        setServiceTypes(initialServiceTypes)
-      })
-  }, [])
 
   const handleServiceTypeSelection = selectedServiceType => {
     setServiceType(selectedServiceType)
     setStep(1)
   }
-
+  /*
   const handleServiceSelection = selectedService => {
     setService(selectedService)
+    setStep(2)
+  }
+*/
+  const handleServiceSelection = (service) => {
+    if (!selectedServices.includes(service)) {
+      setSelectedServices([...selectedServices, service])
+    } else {
+      setSelectedServices(selectedServices.filter(s => s !== service))
+    }
+  }
+
+  const handleRemoveService = (service) => {
+    setSelectedServices(selectedServices.filter(s => s !== service))
+  }
+
+  const handleChooseTime = () => {
     setStep(2)
   }
 
@@ -59,8 +72,9 @@ const Booking = () => {
 
   return (
     <div className="App-header">
-      {step === 0 && <ServiceTypeSelection serviceTypes={serviceTypes} onSelect={handleServiceTypeSelection} />}
-      {step === 1 && <ServiceSelection onSelect={handleServiceSelection} serviceType={serviceType} onBack={handleBack} />}
+      {step === 0 && <ServiceTypeSelection onSelect={handleServiceTypeSelection} />}
+      {step === 1 && <ServiceSelection onSelect={handleServiceSelection} serviceType={serviceType} onBack={handleBack} selectedServices={selectedServices} />}
+      {(step === 0 || step === 1) && <Summary services={selectedServices} onSelect={handleChooseTime} onRemoveService={handleRemoveService} />}
       {step === 2 && <Calendar onSelect={handleTimeSelection} onWorkerSelect={handleWorkerSelection} onBackTwo={handleBackTwo} />}
       {step === 3 && <CustomerInfo onSubmit={handleCustomerInfoSubmission} onBack={handleBack} onBackThree={handleBackThree} />}
       {step === 4 && <BookingCompleted onBackThree={handleBackThree} />}
@@ -68,9 +82,38 @@ const Booking = () => {
   )
 }
 
-const ServiceTypeSelection = ({ serviceTypes, onSelect }) => {
+const Summary = ({ services, onSelect, onRemoveService }) => {
+
+  return (
+    <div>
+      <h1>Summary</h1>
+      {services.length === 0 ? (
+        <p>Choose service</p>
+      ) : (
+        services.map((service, index) => (
+          <p key={index}>
+            Service: {service}
+            <CancelIcon onClick={() => onRemoveService(service)} />
+          </p>
+        ))
+      )}
+      <div onClick={services.length > 0 ? onSelect : null} style={{ cursor: services.length > 0 ? 'pointer' : 'default' }}>
+        Select time
+      </div>
+    </div>
+  )
+}
+
+const ServiceTypeSelection = ({ onSelect }) => {
+  const [serviceTypes, setServiceTypes] = useState([])
   //const serviceTypes = ['Fysioterapia', 'Klassinen hieronta', 'Kuumakivihieronta']
 
+  useEffect(() => {
+    serviceService.getAllTypes()
+      .then(initialServiceTypes => {
+        setServiceTypes(initialServiceTypes)
+      })
+  }, [])
   // DO: Aika button not disabled if at least one service selected
   // DO: Move links to booking?
   return (
@@ -80,16 +123,28 @@ const ServiceTypeSelection = ({ serviceTypes, onSelect }) => {
       <button disabled>Tiedot</button>
       <button disabled>Valmis</button>
       <h1>Select a Service Type</h1>
-      {serviceTypes.map(serviceType => (
-        <button key={serviceType} onClick={() => onSelect(serviceType)}>
-          {serviceType}
-        </button>
-      ))}
+      <div>
+        {serviceTypes.map((type, index) => (
+          <div
+            key={index}
+            onClick={() => onSelect(type)}
+            style={{
+              border: '1px solid #000',
+              borderRadius: '5px',
+              padding: '10px',
+              margin: '10px',
+              cursor: 'pointer'
+            }}
+          >
+            {type}
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
 
-const ServiceSelection = ({ onSelect, serviceType, onBack }) => {
+const ServiceSelection = ({ onSelect, serviceType, onBack, selectedServices }) => {
   const [serviceNames, setServiceNames] = useState([])
   /*
   let services = []
@@ -122,11 +177,26 @@ const ServiceSelection = ({ onSelect, serviceType, onBack }) => {
       <div>
         <button onClick={onBack}>Valitse lisää palveluita</button>
       </div>
-      {serviceNames.map(name => (
-        <button key={name} onClick={() => handleSelect(name)}>
-          {name}
-        </button>
-      ))}
+      <div>
+        {serviceNames.map((name, index) => (
+          <div
+            key={index}
+            onClick={() => handleSelect(name)}
+            style={{
+              border: '1px solid #000',
+              borderRadius: '5px',
+              padding: '10px',
+              margin: '10px',
+              cursor: 'pointer'
+            }}
+          >
+            {name}
+            {selectedServices.includes(name) && <CheckCircleIcon onClick={() => onSelect(name)} />
+            }
+
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

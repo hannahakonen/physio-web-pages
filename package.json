@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@material-ui/icons": "^4.11.3",
     "bcrypt": "^5.1.1",
     "mongoose-unique-validator": "^4.0.0"
   }

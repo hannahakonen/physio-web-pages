@@ -12,12 +12,16 @@ servicesRouter.get('/types', async (request, response) => {
   response.json(types)
 })
 
-// get services by type
+// get services by type with the cheapest price
 servicesRouter.get('/types/:type', async (request, response) => {
   try {
-    const services = await Service.find({ type: request.params.type }).distinct('name')//.populate('workers', { username: 1, name: 1 })
+    const services = await Service.aggregate([
+      { $match: { type: request.params.type } },
+      { $group: { _id: '$name', minPrice: { $min: '$price' }, duration: { $first: '$duration' } } }
+    ])
+
     if (services.length > 0) {
-      response.json(services)
+      response.json(services.map(service => ({ name: service._id, minPrice: service.minPrice, duration: service.duration })))
     } else {
       response.status(404).send({ error: 'No services found for this type' })
     }

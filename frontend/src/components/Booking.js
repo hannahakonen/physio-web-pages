@@ -10,9 +10,10 @@ const Booking = () => {
   const [serviceType, setServiceType] = useState(null)
   const [service, setService] = useState(null)
   const [selectedServices, setSelectedServices] = useState([])
-  const [price, setPrice] = useState(null)
+  const [totalPrice, setTotalPrice] = useState(0)
   const [time, setTime] = useState(null)
   const [worker, setWorker] = useState(null)
+  const [totalDuration, setTotalDuration] = useState(0)
 
   const handleServiceTypeSelection = selectedServiceType => {
     setServiceType(selectedServiceType)
@@ -25,10 +26,23 @@ const Booking = () => {
   }
 */
   const handleServiceSelection = (service) => {
+    let newTotalPrice = totalPrice
+    let newTotalDuration = totalDuration
+
     if (!selectedServices.includes(service)) {
       setSelectedServices([...selectedServices, service])
+      newTotalPrice += service.minPrice
+      setTotalPrice(newTotalPrice)
+      newTotalDuration += service.duration
+      setTotalDuration(newTotalDuration)
+      console.log('Total duration:', totalDuration)
     } else {
       setSelectedServices(selectedServices.filter(s => s !== service))
+      newTotalPrice -= service.minPrice
+      setTotalPrice(newTotalPrice)
+      newTotalDuration -= service.duration
+      setTotalDuration(newTotalDuration)
+      console.log('Total duration:', totalDuration)
     }
   }
 
@@ -74,30 +88,33 @@ const Booking = () => {
     <div className="App-header">
       {step === 0 && <ServiceTypeSelection onSelect={handleServiceTypeSelection} />}
       {step === 1 && <ServiceSelection onSelect={handleServiceSelection} serviceType={serviceType} onBack={handleBack} selectedServices={selectedServices} />}
-      {(step === 0 || step === 1) && <Summary services={selectedServices} onSelect={handleChooseTime} onRemoveService={handleRemoveService} />}
-      {step === 2 && <Calendar onSelect={handleTimeSelection} onWorkerSelect={handleWorkerSelection} onBackTwo={handleBackTwo} />}
+      {(step === 0 || step === 1) && <Summary selectedServices={selectedServices} onSelect={handleChooseTime} onRemoveService={handleServiceSelection} totalPrice={totalPrice} />}
+      {step === 2 && <Calendar onSelect={handleTimeSelection} onWorkerSelect={handleWorkerSelection} onBackTwo={handleBackTwo} totalDuration={totalDuration} />}
       {step === 3 && <CustomerInfo onSubmit={handleCustomerInfoSubmission} onBack={handleBack} onBackThree={handleBackThree} />}
       {step === 4 && <BookingCompleted onBackThree={handleBackThree} />}
     </div>
   )
 }
 
-const Summary = ({ services, onSelect, onRemoveService }) => {
+const Summary = ({ selectedServices, onSelect, onRemoveService, totalPrice }) => {
 
   return (
     <div>
       <h1>Summary</h1>
-      {services.length === 0 ? (
+      {selectedServices.length === 0 ? (
         <p>Choose service</p>
       ) : (
-        services.map((service, index) => (
-          <p key={index}>
-            Service: {service}
-            <CancelIcon onClick={() => onRemoveService(service)} />
-          </p>
-        ))
+        <>
+          {selectedServices.map((service, index) => (
+            <p key={index}>
+            Service: {service.name} Alkaen {service.minPrice} €
+              <CancelIcon onClick={() => onRemoveService(service)} />
+            </p>
+          ))}
+          <p>Total: {totalPrice} €</p>
+        </>
       )}
-      <div onClick={services.length > 0 ? onSelect : null} style={{ cursor: services.length > 0 ? 'pointer' : 'default' }}>
+      <div onClick={selectedServices.length > 0 ? onSelect : null} style={{ cursor: selectedServices.length > 0 ? 'pointer' : 'default' }}>
         Select time
       </div>
     </div>
@@ -145,7 +162,7 @@ const ServiceTypeSelection = ({ onSelect }) => {
 }
 
 const ServiceSelection = ({ onSelect, serviceType, onBack, selectedServices }) => {
-  const [serviceNames, setServiceNames] = useState([])
+  const [servicesByType, setServicesByType] = useState([])
   /*
   let services = []
   if (serviceType === 'Fysioterapia') {
@@ -158,13 +175,13 @@ const ServiceSelection = ({ onSelect, serviceType, onBack, selectedServices }) =
   */
   useEffect(() => {
     serviceService.getServicesByType(serviceType)
-      .then(initialServiceNames => {
-        setServiceNames(initialServiceNames)
+      .then(service => {
+        setServicesByType(service)
       })
   }, [serviceType])
 
-  const handleSelect = (name) => {
-    onSelect(name)
+  const handleSelect = (service) => {
+    onSelect(service)
   }
   // DO: Aika button not disabled if at least one service selected
   return (
@@ -178,10 +195,10 @@ const ServiceSelection = ({ onSelect, serviceType, onBack, selectedServices }) =
         <button onClick={onBack}>Valitse lisää palveluita</button>
       </div>
       <div>
-        {serviceNames.map((name, index) => (
+        {servicesByType.map((service, index) => (
           <div
             key={index}
-            onClick={() => handleSelect(name)}
+            onClick={() => handleSelect(service)}
             style={{
               border: '1px solid #000',
               borderRadius: '5px',
@@ -190,10 +207,8 @@ const ServiceSelection = ({ onSelect, serviceType, onBack, selectedServices }) =
               cursor: 'pointer'
             }}
           >
-            {name}
-            {selectedServices.includes(name) && <CheckCircleIcon onClick={() => onSelect(name)} />
-            }
-
+            {service.name} {service.minPrice} €
+            {selectedServices.some(selectedService => selectedService.name === service.name) && <CheckCircleIcon onClick={() => onSelect(service)} />}
           </div>
         ))}
       </div>

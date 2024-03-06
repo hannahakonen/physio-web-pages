@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import worktimeService from '../services/worktimes'
 import bookingService from '../services/bookings'
 
-const Calendar = ({ onSelect, onWorkerSelect, onBackTwo }) => {
+const Calendar = ({ onSelect, onWorkerSelect, onBackTwo, totalDuration }) => {
   const [startDate, setStartDate] = useState(new Date())
   const [worktimes, setWorktimes] = useState([])
   const [bookings, setBookings] = useState([])
@@ -71,7 +71,7 @@ const Calendar = ({ onSelect, onWorkerSelect, onBackTwo }) => {
       <button onClick={handlePreviousWeek} disabled={isPreviousWeekDisabled()}>Previous</button>
       <button onClick={handleNextWeek}>Next</button>
       <WorkerSelection onSelect={onWorkerSelect} />
-      <WeekView startDate={startDate} worktimes={worktimes} bookings={bookings} onSelect={onSelect} />
+      <WeekView startDate={startDate} worktimes={worktimes} bookings={bookings} onSelect={onSelect} totalDuration={totalDuration} />
     </div>
   )
 }
@@ -91,7 +91,7 @@ const WorkerSelection = ({ onSelect }) => {
   )
 }
 
-const WeekView = ({ startDate, worktimes, bookings, onSelect }) => {
+const WeekView = ({ startDate, worktimes, bookings, onSelect, totalDuration }) => {
   // Generate an array of dates for the week
   const dates = Array.from({ length: 7 }, (v, i) => {
     const date = new Date(startDate)
@@ -122,7 +122,7 @@ const WeekView = ({ startDate, worktimes, bookings, onSelect }) => {
           <tr>
             {dates.map(date => (
               <td key={date.toString()}>
-                <Day date={date} worktimes={worktimes} bookings={bookings} />
+                <Day date={date} worktimes={worktimes} bookings={bookings} totalDuration={totalDuration} />
               </td>
             ))}
           </tr>
@@ -132,7 +132,7 @@ const WeekView = ({ startDate, worktimes, bookings, onSelect }) => {
   )
 }
 
-const Day = ({ date, worktimes, bookings }) => {
+const Day = ({ date, worktimes, bookings, totalDuration }) => {
   //poista
   const [timeSlots, setTimeSlots] = useState([])
 
@@ -156,9 +156,10 @@ const Day = ({ date, worktimes, bookings }) => {
   console.log(endTime)
   */
 
-  // TO DO: this from DB
-  // REMEMBER TO CHANGE THE DURATION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  let serviceDuration = 60 / 60
+  //let serviceDuration = 60 / 60
+  //console.log(serviceDuration)
+  let serviceDuration = totalDuration / 60
+  console.log(totalDuration)
   let breakDuration = 15 / 60
 
   const bookingList = bookings.filter(booking => {

@@ -6,6 +6,7 @@ const getAllTypes = () => {
   return request.then(response => response.data)
 }
 
+// get service names, cheapest price and duration by type
 const getServicesByType = (type) => {
   const request = axios.get(`${baseUrl}/types/${type}`)
   return request.then(response => response.data)

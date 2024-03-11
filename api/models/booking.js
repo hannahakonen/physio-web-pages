@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const bookingSchema = new mongoose.Schema({
   type: String,
-  services: [String],
+  service: String,
   start: Date,
   end: Date,
   worker: {

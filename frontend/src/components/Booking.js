@@ -176,6 +176,7 @@ const ServiceSelection = ({ onSelect, serviceType, onBack, selectedServices }) =
   useEffect(() => {
     serviceService.getServicesByType(serviceType)
       .then(service => {
+        console.log(service)
         setServicesByType(service)
       })
   }, [serviceType])
@@ -209,6 +210,7 @@ const ServiceSelection = ({ onSelect, serviceType, onBack, selectedServices }) =
           >
             {service.name} {service.minPrice} €
             {selectedServices.some(selectedService => selectedService.name === service.name) && <CheckCircleIcon onClick={() => onSelect(service)} />}
+            {service.description && <p style={{ fontSize: '13px' }}>{service.description}</p>}
           </div>
         ))}
       </div>

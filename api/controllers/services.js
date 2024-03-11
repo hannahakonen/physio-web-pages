@@ -17,11 +17,44 @@ servicesRouter.get('/types/:type', async (request, response) => {
   try {
     const services = await Service.aggregate([
       { $match: { type: request.params.type } },
-      { $group: { _id: '$name', minPrice: { $min: '$price' }, duration: { $first: '$duration' } } }
+      { $unwind: '$priceByWorker' },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'priceByWorker.worker',
+          foreignField: '_id',
+          as: 'priceByWorker.worker'
+        }
+      },
+      { $unwind: '$priceByWorker.worker' },
+      {
+        $project: {
+          name: 1,
+          type: 1,
+          description: 1,
+          duration: 1,
+          'priceByWorker.price': 1,
+          'priceByWorker.worker': {
+            username: 1,
+            firstName: 1
+          }
+        }
+      },
+      {
+        $group: {
+          _id: '$_id',
+          name: { $first: '$name' },
+          type: { $first: '$type' },
+          description: { $first: '$description' },
+          duration: { $first: '$duration' },
+          priceByWorker: { $push: '$priceByWorker' },
+          minPrice: { $min: '$priceByWorker.price' }
+        }
+      }
     ])
 
     if (services.length > 0) {
-      response.json(services.map(service => ({ name: service._id, minPrice: service.minPrice, duration: service.duration })))
+      response.json(services)
     } else {
       response.status(404).send({ error: 'No services found for this type' })
     }

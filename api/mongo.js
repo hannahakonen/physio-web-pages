@@ -1,6 +1,8 @@
 const mongoose = require('mongoose')
 const User = require('./models/user')
 const Note = require('./models/note')
+const bcrypt = require('bcrypt')
+const Service = require('./models/service')
 
 if (process.argv.length < 3) {
   console.log('give password as argument')
@@ -21,43 +23,21 @@ mongoose.set('strictQuery', false)
 mongoose.connect(url)
 
 // Adding a new service to the database
-const serviceSchema = new mongoose.Schema({
-  type: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  name: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  description: String,
-  duration: {
-    type: Number,
-    required: true,
-    min: 0
-  },
-  price: {
-    type: Number,
-    required: true,
-    min: 0
-  },
-  worker: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  }
-})
-
-const Service = mongoose.model('Service', serviceSchema)
-
+/*
 const newService = new Service({
-  type: 'Urheiluhieronta',
-  name: 'Urheiluhieronta 60 min',
-  description: 'Urheiluhieronta on klassista hierontaa voimakkaampi hieronta, jossa käsitellään enemmän faskioita/lihaskalvoja sekä keskitytään ongelma-alueiden avaamiseen. Hieronta mm. lievittää lihas- ja nivelkipuja, vapauttaa kalvoja ja avaa kehon tukkeumia.',
-  duration: 60,
-  price: 66,
-  worker: '65affaa8e44acd2968c22c4d'
+  type: 'Päähieronta',
+  name: 'Päähieronta 45 min',
+  duration: 45,
+  priceByWorker: [
+    {
+      worker: '65eaff6db22b4f0a35a744d8',
+      price: 56
+    },
+    {
+      worker: '65eb000a06cdcb9bed6cde0a',
+      price: 54
+    }
+  ]
 })
 
 newService.save()
@@ -66,6 +46,7 @@ newService.save()
     mongoose.connection.close()
   })
   .catch(err => console.log(err))
+*/
 
 // Adding a new worktime to the database
 /*
@@ -191,33 +172,30 @@ const userSchema = new mongoose.Schema({
 */
 
 //Adding a new user to the database
+// not tested with passwordhashing
 /*
-const userSchema = mongoose.Schema({
-  username: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  name: String,
-  passwordHash: String,
-  notes: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Note'
-    }
-  ],
-})
+const userPassword = 'salainen'
+const saltRounds = 10
 
-const User = mongoose.model('User', userSchema)
+async function hashPassword(userPassword, saltRounds) {
+  const passwordHash = await bcrypt.hash(userPassword, saltRounds)
+  return passwordHash
+}
+
+const passwordHash = hashPassword(userPassword, saltRounds)
 
 const user = new User({
-  username: 'katijo',
-  name: 'Me Me',
-  passwordHash: 'salainen'
+  username: 'maijamattila',
+  firstName: 'Maija',
+  lastName: 'Mattila',
+  email: 'maija.mattila@gmail.com',
+  phone: '0401234569',
+  role: 3,
+  passwordHash: passwordHash
 })
 
 user.save().then(result => {
-  console.log('note saved!')
+  console.log('user saved!')
   mongoose.connection.close()
 })
 */
@@ -256,12 +234,13 @@ Note.find({}).then(result => {
 })
 */
 
-/*
+
 // change the password of the user
-const bcrypt = require('bcrypt')
+//const bcrypt = require('bcrypt')
+/*
 const saltRounds = 10 // or whatever value you want
 
-const username = 'katijo' // replace with the actual username
+const username = 'maijamattila' // replace with the actual username
 const newPassword = 'salainen' // replace with the actual new password
 
 // Hash the new password
@@ -280,3 +259,4 @@ bcrypt.hash(newPassword, saltRounds)
   })
   .catch(err => console.log(err))
   */
+

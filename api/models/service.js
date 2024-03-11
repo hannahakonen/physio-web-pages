@@ -17,10 +17,18 @@ const serviceSchema = new mongoose.Schema({
     required: true,
     min: 0
   },
-  workers: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  }]
+  priceByWorker: [
+    {
+      worker: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+      },
+      price: {
+        type: Number,
+        required: true,
+        min: 0
+      }
+    }]
 })
 
 const Service = mongoose.model('Service', serviceSchema)

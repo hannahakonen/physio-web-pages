@@ -13,6 +13,7 @@ const Booking = () => {
   const [totalPrice, setTotalPrice] = useState(0)
   const [time, setTime] = useState(null)
   const [worker, setWorker] = useState(null)
+  const [workers, setWorkers] = useState([])
   const [totalDuration, setTotalDuration] = useState(0)
 
   const handleServiceTypeSelection = selectedServiceType => {
@@ -28,9 +29,12 @@ const Booking = () => {
   const handleServiceSelection = (service) => {
     let newTotalPrice = totalPrice
     let newTotalDuration = totalDuration
+    let workers = service.priceByWorker.map(p => p.worker)
 
     if (!selectedServices.includes(service)) {
       setSelectedServices([...selectedServices, service])
+      setWorkers(workers)
+      console.log('Workers:', workers)
       newTotalPrice += service.minPrice
       setTotalPrice(newTotalPrice)
       newTotalDuration += service.duration
@@ -62,6 +66,9 @@ const Booking = () => {
   const handleWorkerSelection = selectedWorker => {
     setWorker(selectedWorker)
   }
+  const handleWorkersSelection = (selectedWorkers) => {
+    setWorkers(selectedWorkers)
+  }
 
   const handleBack = () => {
     setStep(step - 1)
@@ -89,7 +96,7 @@ const Booking = () => {
       {step === 0 && <ServiceTypeSelection onSelect={handleServiceTypeSelection} />}
       {step === 1 && <ServiceSelection onSelect={handleServiceSelection} serviceType={serviceType} onBack={handleBack} selectedServices={selectedServices} />}
       {(step === 0 || step === 1) && <Summary selectedServices={selectedServices} onSelect={handleChooseTime} onRemoveService={handleServiceSelection} totalPrice={totalPrice} />}
-      {step === 2 && <Calendar onSelect={handleTimeSelection} onWorkerSelect={handleWorkerSelection} onBackTwo={handleBackTwo} totalDuration={totalDuration} />}
+      {step === 2 && <Calendar onSelect={handleTimeSelection} onWorkerSelect={handleWorkerSelection} workers={workers} onBackTwo={handleBackTwo} totalDuration={totalDuration} />}
       {step === 3 && <CustomerInfo onSubmit={handleCustomerInfoSubmission} onBack={handleBack} onBackThree={handleBackThree} />}
       {step === 4 && <BookingCompleted onBackThree={handleBackThree} />}
     </div>
@@ -106,9 +113,11 @@ const Summary = ({ selectedServices, onSelect, onRemoveService, totalPrice }) =>
       ) : (
         <>
           {selectedServices.map((service, index) => (
-            <p key={index}>
+            <p key={index} onClick={() => onRemoveService(service)} style={{
+              cursor: 'pointer'
+            }}>
             Service: {service.name} Alkaen {service.minPrice} €
-              <CancelIcon onClick={() => onRemoveService(service)} />
+              <CancelIcon />
             </p>
           ))}
           <p>Total: {totalPrice} €</p>

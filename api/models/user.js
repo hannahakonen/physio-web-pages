@@ -53,6 +53,12 @@ const userSchema = mongoose.Schema({
       ref: 'Booking'
     }
   ],
+  services: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Service'
+    }
+  ],
   notes: [
     {
       type: mongoose.Schema.Types.ObjectId,

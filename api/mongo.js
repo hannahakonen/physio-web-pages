@@ -3,6 +3,8 @@ const User = require('./models/user')
 const Note = require('./models/note')
 const bcrypt = require('bcrypt')
 const Service = require('./models/service')
+const Worktime = require('./models/worktime')
+const Booking = require('./models/booking')
 
 if (process.argv.length < 3) {
   console.log('give password as argument')
@@ -260,3 +262,144 @@ bcrypt.hash(newPassword, saltRounds)
   .catch(err => console.log(err))
   */
 
+// Add all worktimes to the user
+/*
+const userId = '65eaff6db22b4f0a35a744d8' // replace with the actual ID
+
+async function addWorktimesToUser() {
+  try {
+    // Fetch all worktimes
+    const worktimes = await Worktime.find({})
+
+    // Extract the IDs of the worktimes
+    const worktimeIds = worktimes.map(worktime => worktime._id)
+
+    // Update the user with the worktime IDs
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $push: { worktimes: { $each: worktimeIds } } },
+      { new: true, useFindAndModify: false }
+    )
+
+    console.log(updatedUser)
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+addWorktimesToUser()
+*/
+
+// Add all bookings to the user
+/*
+const userId = '65eaff6db22b4f0a35a744d8' // replace with the actual ID
+
+async function addBookingsToUser() {
+  try {
+    // Fetch all bookings
+    const bookings = await Booking.find({})
+
+    // Extract the IDs of the bookings
+    const bookingIds = bookings.map(booking => booking._id)
+
+    // Update the user with the booking IDs
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $push: { bookings: { $each: bookingIds } } },
+      { new: true, useFindAndModify: false }
+    )
+
+    console.log(updatedUser)
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+addBookingsToUser()
+*/
+
+// Add all services to the user
+/*
+const userId = '65eaff6db22b4f0a35a744d8' // replace with the actual ID
+
+async function addServicesToUser() {
+  try {
+    // Fetch all services
+    const services = await Service.find({})
+
+    // Extract the IDs of the services
+    const serviceIds = services.map(service => service._id)
+
+    // Update the user with the service IDs
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $push: { services: { $each: serviceIds } } },
+      { new: true, useFindAndModify: false }
+    )
+
+    console.log(updatedUser)
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+addServicesToUser()
+*/
+
+// Add service field to all users
+/*
+async function addServicesFieldToUsers() {
+  try {
+    // Update all users to include the services field
+    const result = await User.updateMany(
+      {},
+      { $set: { services: [] } }
+    )
+
+    console.log(result)
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+addServicesFieldToUsers()
+*/
+
+/*
+const userId = '65eb000a06cdcb9bed6cde0a' // replace with the actual ID
+const serviceIds = ['65eb2fcd97330ed73b59c194', '65eb322da172693c1b1378f0'] // replace with the actual IDs
+
+async function addSpecificServicesToUser() {
+  try {
+    // Update the user with the service IDs
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $push: { services: { $each: serviceIds } } },
+      { new: true, useFindAndModify: false }
+    )
+
+    console.log(updatedUser)
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+addSpecificServicesToUser()
+*/
+
+const userId = '65eb000a06cdcb9bed6cde0a'
+const worktimeId = '65f1b5c60bc2b8be9e750f9e'
+
+User.findByIdAndUpdate(
+  userId,
+  { $push: { worktimes: worktimeId } },
+  { new: true, useFindAndModify: false }
+)
+  .then(updatedUser => {
+    // Handle success
+    console.log(updatedUser)
+  })
+  .catch(error => {
+    // Handle error
+    console.error(error)
+  })

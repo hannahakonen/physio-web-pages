@@ -1,27 +1,41 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
-const Day = ({ date, worktimes, bookings, totalDuration }) => {
-  //poista
-  //const [timeSlots, setTimeSlots] = useState([])
+const Day = ({ date, worktimes, bookings, totalDuration, onSelect, worker }) => {
+  const [slots, setSlots] = useState([])
+  const [initialSlots, setInitialSlots] = useState([])
 
-  // TO DO: what if there are more than one worktime per worker, e.g. 10-13 and 17-19?
-  // TO DO: Going through all worktimes and adding slots to the array
+  const calculateAvailableSlots = useCallback(() => {
+    // Your logic here
+  }, [])
 
+  useEffect(() => {
+    const calculatedInitialSlots = calculateAvailableSlots()
+    setInitialSlots(calculatedInitialSlots)
+    setSlots(calculatedInitialSlots)
+  }, [calculateAvailableSlots])
+
+  useEffect(() => {
+    if (worker && worker !== 'anyone') {
+      const filteredSlots = initialSlots.filter(slot => slot.workers.includes(worker))
+      setSlots(filteredSlots)
+    } else {
+      setSlots(initialSlots)
+    }
+  }, [worker, initialSlots])
+
+  // MUOKKAA LOPPU SOPIMAAN
   const worktimeList = worktimes.filter(worktime => {
     const startDate = new Date(worktime.start)
     return startDate.getDate() === date.getDate() && startDate.getMonth() === date.getMonth()
   })
 
-  function calculateAvailableSlots(startTime, endTime, serviceDuration, breakDuration, bookingTimes) {
+  function calculateSlots(startTime, endTime, serviceDuration, breakDuration, bookingTimes) {
     // Convert the times to minutes
     let start = startTime.getHours() * 60 + startTime.getMinutes()
     let end = endTime.getHours() * 60 + endTime.getMinutes()
     let service = serviceDuration * 60
     let breakTime = breakDuration * 60
     //let workerName = worker
-
-    // Initialize an array for the slots
-    let slots = []
 
     // Create the initial slots every 30 minutes
     for (let current = start; current <= end - service; current += 30) {
@@ -76,12 +90,12 @@ const Day = ({ date, worktimes, bookings, totalDuration }) => {
     })
 
     // Sort the slots in ascending order of the time
-    slots.sort((a, b) => a - b)
+    //slots.sort((a, b) => a - b)
 
     return slots
   }
 
-  let slots = []
+  //let slots = []
 
   for (let worktime of worktimeList) {
 
@@ -142,7 +156,7 @@ const Day = ({ date, worktimes, bookings, totalDuration }) => {
       //let bookings = []
       */
 
-    let timeSlots = calculateAvailableSlots(startTime, endTime, serviceDuration, breakDuration, bookingTimes)
+    let timeSlots = calculateSlots(startTime, endTime, serviceDuration, breakDuration, bookingTimes)
 
     // New array (Date, [worker])
     timeSlots.forEach(slot => {
@@ -160,6 +174,9 @@ const Day = ({ date, worktimes, bookings, totalDuration }) => {
         })
       }
     })
+
+    // Sort the slots in ascending order of the time
+    slots.sort((a, b) => a.date - b.date)
 
     // Print the slots
     slots.forEach(slot => {
@@ -179,7 +196,11 @@ const Day = ({ date, worktimes, bookings, totalDuration }) => {
     <div>
       <div>{date.getDate()}.{date.getMonth() + 1}.</div>
       {slots.map((slot, i) => (
-        <><button key={i}>{slot.date.getHours()}:{slot.date.getMinutes()}</button><br></br></>
+        <><button key={i} onClick={() => onSelect(slot)}>
+          {slot.date.getHours()}:{slot.date.getMinutes()}
+        </button>
+        <br></br>
+        </>
       ))}
     </div>
   )

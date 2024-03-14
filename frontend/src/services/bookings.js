@@ -6,4 +6,9 @@ const getAll = () => {
   return request.then(response => response.data)
 }
 
-export default { getAll }
+const getWorkerWithLeastBookings = async (workers) => {
+  const response = await axios.get(`${baseUrl}/workers?usernames=${workers.join(',')}`)
+  return response.data
+}
+
+export default { getAll, getWorkerWithLeastBookings }

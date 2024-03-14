@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Calendar from './Calendar'
 import serviceService from '../services/services'
+import bookingService from '../services/bookings'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import CancelIcon from '@mui/icons-material/Cancel'
 
@@ -12,7 +13,7 @@ const Booking = () => {
   const [selectedServices, setSelectedServices] = useState([])
   const [totalPrice, setTotalPrice] = useState(0)
   const [time, setTime] = useState(null)
-  const [worker, setWorker] = useState(null)
+  const [worker, setWorker] = useState('anyone')
   const [workers, setWorkers] = useState([])
   const [totalDuration, setTotalDuration] = useState(0)
 
@@ -63,9 +64,24 @@ const Booking = () => {
     setStep(3)
   }
 
+  // what type is selectedWorker?
   const handleWorkerSelection = selectedWorker => {
     setWorker(selectedWorker)
   }
+
+  // Choosing the worker, setting time and ONLY THE FIRST SERVICE OF SERVICESELECTION
+  const handleSlotSelection = async (slot) => {
+    if (slot.workers.length === 1) {
+      handleWorkerSelection(slot.workers[0])
+    } else {
+      //how to select the worker?
+      const worker = await bookingService.getWorkerWithLeastBookings(slot.workers)
+      handleWorkerSelection(worker.username)
+    }
+    handleTimeSelection(slot.date)
+    setService(selectedServices[0].name)
+  }
+
   const handleWorkersSelection = (selectedWorkers) => {
     setWorkers(selectedWorkers)
   }
@@ -96,7 +112,7 @@ const Booking = () => {
       {step === 0 && <ServiceTypeSelection onSelect={handleServiceTypeSelection} />}
       {step === 1 && <ServiceSelection onSelect={handleServiceSelection} serviceType={serviceType} onBack={handleBack} selectedServices={selectedServices} />}
       {(step === 0 || step === 1) && <Summary selectedServices={selectedServices} onSelect={handleChooseTime} onRemoveService={handleServiceSelection} totalPrice={totalPrice} />}
-      {step === 2 && <Calendar onSelect={handleTimeSelection} onWorkerSelect={handleWorkerSelection} workers={workers} onBackTwo={handleBackTwo} totalDuration={totalDuration} />}
+      {step === 2 && <Calendar onSelect={handleSlotSelection} onWorkerSelect={handleWorkerSelection} workers={workers} onBackTwo={handleBackTwo} totalDuration={totalDuration} worker={worker} />}
       {step === 3 && <CustomerInfo onSubmit={handleCustomerInfoSubmission} onBack={handleBack} onBackThree={handleBackThree} />}
       {step === 4 && <BookingCompleted onBackThree={handleBackThree} />}
     </div>

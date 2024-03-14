@@ -19,11 +19,11 @@ const Calendar = ({ onSelect, onWorkerSelect, workers, onBackTwo, totalDuration 
   // Should there be something in the last []?
   useEffect(() => {
     worktimeService
-      .getAll()
+      .getWorktimesByWorkers(workers.map(worker => worker.username))
       .then(initialWorktimes => {
         setWorktimes(initialWorktimes)
       })
-  }, [])
+  }, [workers])
 
   console.log('render', worktimes.length, 'worktimes')
 
@@ -81,10 +81,11 @@ const Calendar = ({ onSelect, onWorkerSelect, workers, onBackTwo, totalDuration 
 // TO DO: onCLick: setSelectedWorker selected, worker's times shown
 const WorkerSelection = ({ onSelect, workers }) => {
   //const workers = ['Kuka tahansa', 'Laura', 'Mikko']
+  const allWorkers = [...workers, { username: 'anyone', firstName: 'Kuka tahansa' }]
   return (
     <div>
       {workers.length > 0 ? (
-        workers.map((worker, i) => (
+        allWorkers.map((worker, i) => (
           worker.firstName ? (
             <button key={i} onClick={() => onSelect(worker)}>
               {worker.firstName}
@@ -108,15 +109,10 @@ const WeekView = ({ startDate, worktimes, bookings, onSelect, totalDuration }) =
 
   const weekdays = ['MA', 'TI', 'KE', 'TO', 'PE', 'LA', 'SU']
   // For simplicity, just use a static list of times
-  const times = ['9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00']
+  //const times = ['9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00']
 
   return (
     <div>
-      {times.map(time => (
-        <button key={time} onClick={() => onSelect(time)}>
-          {time}
-        </button>
-      ))}
       <table>
         <thead>
           <tr>
@@ -129,7 +125,7 @@ const WeekView = ({ startDate, worktimes, bookings, onSelect, totalDuration }) =
           <tr>
             {dates.map(date => (
               <td key={date.toString()}>
-                <Day date={date} worktimes={worktimes} bookings={bookings} totalDuration={totalDuration} />
+                <Day date={date} worktimes={worktimes} bookings={bookings} totalDuration={totalDuration} onSelect={onSelect} />
               </td>
             ))}
           </tr>

@@ -13,7 +13,7 @@ const Booking = () => {
   const [selectedServices, setSelectedServices] = useState([])
   const [totalPrice, setTotalPrice] = useState(0)
   const [time, setTime] = useState(null)
-  const [worker, setWorker] = useState('anyone')
+  const [worker, setWorker] = useState({ username: 'anyone', firstName: 'Kuka tahansa' })
   const [workers, setWorkers] = useState([])
   const [totalDuration, setTotalDuration] = useState(0)
 
@@ -28,6 +28,7 @@ const Booking = () => {
   }
 */
   const handleServiceSelection = (service) => {
+    //console.log('Worker in Booking component:', worker)
     let newTotalPrice = totalPrice
     let newTotalDuration = totalDuration
     let workers = service.priceByWorker.map(p => p.worker)

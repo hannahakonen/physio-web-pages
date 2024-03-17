@@ -3,10 +3,11 @@ import worktimeService from '../services/worktimes'
 import bookingService from '../services/bookings'
 import Day from './Day'
 
-const Calendar = ({ onSelect, onWorkerSelect, workers, onBackTwo, totalDuration }) => {
+const Calendar = ({ onSelect, onWorkerSelect, workers, onBackTwo, totalDuration, worker }) => {
   const [startDate, setStartDate] = useState(new Date())
   const [worktimes, setWorktimes] = useState([])
   const [bookings, setBookings] = useState([])
+  //console.log('Worker in the beginning of calendar component:', worker)
 
   // Set the start date to the first day of the current week (Mon)
   useEffect(() => {
@@ -72,7 +73,7 @@ const Calendar = ({ onSelect, onWorkerSelect, workers, onBackTwo, totalDuration 
       <button onClick={handlePreviousWeek} disabled={isPreviousWeekDisabled()}>Previous</button>
       <button onClick={handleNextWeek}>Next</button>
       <WorkerSelection onSelect={onWorkerSelect} workers={workers} />
-      <WeekView startDate={startDate} worktimes={worktimes} bookings={bookings} onSelect={onSelect} totalDuration={totalDuration} />
+      <WeekView startDate={startDate} worktimes={worktimes} bookings={bookings} onSelect={onSelect} totalDuration={totalDuration} worker={worker} />
     </div>
   )
 }
@@ -99,7 +100,7 @@ const WorkerSelection = ({ onSelect, workers }) => {
   )
 }
 
-const WeekView = ({ startDate, worktimes, bookings, onSelect, totalDuration }) => {
+const WeekView = ({ startDate, worktimes, bookings, onSelect, totalDuration, worker }) => {
   // Generate an array of dates for the week
   const dates = Array.from({ length: 7 }, (v, i) => {
     const date = new Date(startDate)
@@ -125,7 +126,7 @@ const WeekView = ({ startDate, worktimes, bookings, onSelect, totalDuration }) =
           <tr>
             {dates.map(date => (
               <td key={date.toString()}>
-                <Day date={date} worktimes={worktimes} bookings={bookings} totalDuration={totalDuration} onSelect={onSelect} />
+                <Day date={date} worktimes={worktimes} bookings={bookings} totalDuration={totalDuration} onSelect={onSelect} worker={worker} />
               </td>
             ))}
           </tr>

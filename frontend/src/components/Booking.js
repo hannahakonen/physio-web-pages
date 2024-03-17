@@ -69,7 +69,7 @@ const Booking = () => {
     setWorker(selectedWorker)
   }
 
-  // Choosing the worker, setting time and ONLY THE FIRST SERVICE OF SERVICESELECTION
+  // Choosing the worker, setting time and ONLY THE FIRST SERVICE OF SERVICESELECTION (totalDuration not ok?)
   const handleSlotSelection = async (slot) => {
     if (slot.workers.length === 1) {
       handleWorkerSelection(slot.workers[0])

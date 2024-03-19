@@ -1,8 +1,9 @@
 const servicesRouter = require('express').Router()
 const Service = require('../models/service')
+const User = require('../models/user')
 
 servicesRouter.get('/', async (request, response) => {
-  const services = await Service.find({}).populate('workers', { username: 1, name: 1 })
+  const services = await Service.find({}).populate('workers', { username: 1, firstName: 1 })
   response.json(services)
 })
 
@@ -62,6 +63,17 @@ servicesRouter.get('/types/:type', async (request, response) => {
     console.error(error)
     response.status(500).send({ error: 'Something went wrong' })
   }
+})
+
+// get services by worker
+servicesRouter.get('/workers/:username', async (request, response) => {
+  const worker = await User.findOne({ username: request.params.username }).populate('services')
+
+  if (!worker) {
+    return response.status(404).json({ error: 'worker not found' })
+  }
+
+  response.json(worker.services)
 })
 
 module.exports = servicesRouter

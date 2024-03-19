@@ -12,4 +12,9 @@ const getServicesByType = (type) => {
   return request.then(response => response.data)
 }
 
-export default { getAllTypes, getServicesByType }
+const getServicesByWorker = async (worker) => {
+  const response = await axios.get(`${baseUrl}/workers/${worker}`)
+  return response.data
+}
+
+export default { getAllTypes, getServicesByType, getServicesByWorker }

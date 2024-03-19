@@ -58,7 +58,7 @@ const App = (props) => {
         {user
           ? (
             <>
-              <em>{user.name} logged in</em>
+              <Link style={padding} to="/worker">{user.firstName}</Link>
               <Link style={padding} to="/" onClick={handleLogout}>Logout</Link>
             </>
           )

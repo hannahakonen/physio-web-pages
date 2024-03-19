@@ -11,4 +11,9 @@ const getWorktimesByWorkers = async (workers) => {
   return response.data
 }
 
-export default { getAll, getWorktimesByWorkers }
+const getWorktimesByWorker = async (worker) => {
+  const response = await axios.get(`${baseUrl}/workers/${worker}`)
+  return response.data
+}
+
+export default { getAll, getWorktimesByWorkers, getWorktimesByWorker }

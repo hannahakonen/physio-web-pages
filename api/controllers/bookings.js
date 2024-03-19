@@ -4,8 +4,18 @@ const Booking = require('../models/booking')
 const User = require('../models/user')
 
 bookingsRouter.get('/', async (request, response) => {
-  const bookings = await Booking.find({}).populate('worker', { username: 1, name: 1 })
+  const bookings = await Booking.find({}).populate('worker', { username: 1, firstName: 1 })
   response.json(bookings)
+})
+
+bookingsRouter.get('/workers/:username', async (request, response) => {
+  const worker = await User.findOne({ username: request.params.username }).populate('bookings')
+
+  if (!worker) {
+    return response.status(404).json({ error: 'worker not found' })
+  }
+
+  response.json(worker.bookings)
 })
 
 bookingsRouter.get('/workers', async (request, response) => {

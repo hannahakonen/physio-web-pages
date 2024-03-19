@@ -20,6 +20,8 @@ loginRouter.post('/', async (request, response) => {
   const userForToken = {
     username: user.username,
     id: user._id,
+    role: user.role,
+    firstName: user.firstName
   }
 
   // token expires in 60*60 seconds, that is, in one hour
@@ -27,7 +29,7 @@ loginRouter.post('/', async (request, response) => {
 
   response
     .status(200)
-    .send({ token, username: user.username, name: user.name })
+    .send({ token, username: user.username, name: user.name, role: user.role, firstName: user.firstName})
 })
 
 module.exports = loginRouter

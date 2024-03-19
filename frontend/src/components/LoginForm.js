@@ -29,11 +29,14 @@ const Login = (props) => {
       setUsername('')
       setPassword('')
 
+      //console.log('user.role', user.role)
       if (user.role & 2) {
         navigate('/worker')
       } else {
         navigate('/')
       }
+
+      //navigate('/')
     } catch (exception) {
       setErrorMessage('wrong credentials')
       setTimeout(() => {

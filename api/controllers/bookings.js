@@ -1,6 +1,7 @@
 const bookingsRouter = require('express').Router()
+const { default: mongoose } = require('mongoose')
 const Booking = require('../models/booking')
-const Worker = require('../models/user')
+const User = require('../models/user')
 
 bookingsRouter.get('/', async (request, response) => {
   const bookings = await Booking.find({}).populate('worker', { username: 1, name: 1 })
@@ -10,7 +11,7 @@ bookingsRouter.get('/', async (request, response) => {
 bookingsRouter.get('/workers', async (request, response) => {
   const usernames = request.query.usernames.split(',')
 
-  const workers = await Worker.find({ username: { $in: usernames } })
+  const workers = await User.find({ username: { $in: usernames } })
     .populate('bookings') // populate the bookings field
 
   // map each worker to an object that includes the worker's info and the count of their bookings
@@ -26,6 +27,53 @@ bookingsRouter.get('/workers', async (request, response) => {
   const workerWithLeastBookings = workersWithBookingCount[0]
 
   response.json(workerWithLeastBookings)
+})
+
+bookingsRouter.post('/', async (request, response) => {
+  console.log(request.body)
+  const { serviceType, service, time, endTime, totalDuration, totalPrice, worker: username, firstName, lastName, phone, email, additionalInfo } = request.body
+  console.log(username)
+
+  const session = await mongoose.startSession()
+  session.startTransaction()
+
+  try {
+    const staffer = await User.findOne({ username: username }).session(session)
+    if (!staffer) {
+      throw new Error('The worker does not exist')
+    }
+
+    const existingBooking = await Booking.findOne({ time, worker: staffer._id }).session(session)
+    if (existingBooking) {
+      throw new Error('The worker is already booked at that time')
+    }
+
+    let customer = await User.findOne({ email }).session(session)
+    if (!customer) {
+      customer = new User({ firstName, lastName, phone, email, additionalInfo })
+      await customer.save({ session })
+    }
+
+    console.log('Username:', username)
+    console.log('Staffer:', staffer)
+
+    const booking = new Booking({ type: serviceType, service: service, start: time, end: endTime, duration: totalDuration, price: totalPrice, worker: staffer._id, customer: customer._id })
+    await booking.save({ session })
+
+    staffer.bookings.push(booking._id)
+    customer.bookings.push(booking._id)
+    await staffer.save({ session })
+    await customer.save({ session })
+
+    await session.commitTransaction()
+
+    response.status(201).json(booking)
+  } catch (error) {
+    await session.abortTransaction()
+    response.status(400).json({ error: error.message })
+  } finally {
+    session.endSession()
+  }
 })
 
 module.exports = bookingsRouter

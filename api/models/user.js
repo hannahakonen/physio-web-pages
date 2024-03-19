@@ -65,9 +65,29 @@ const userSchema = mongoose.Schema({
       ref: 'Note'
     }
   ],
+  special: String,
+  emailList: {
+    type: Boolean,
+    default: false
+  },
+  smsList: {
+    type: Boolean,
+    default: false
+  }
 })
 
 userSchema.plugin(uniqueValidator)
+
+// Define a pre-save hook for the User model
+userSchema.pre('validate', function(next) {
+  // If this is a new document (i.e., a new user is being created) and no username is provided
+  if (this.isNew && !this.username) {
+    // Generate a new ObjectId and use its string representation as the username
+    this.username = new mongoose.Types.ObjectId().toString()
+  }
+
+  next()
+})
 
 userSchema.set('toJSON', {
   transform: (document, returnedObject) => {

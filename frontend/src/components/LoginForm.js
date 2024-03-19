@@ -28,7 +28,12 @@ const Login = (props) => {
       props.onLogin(user)
       setUsername('')
       setPassword('')
-      navigate('/')
+
+      if (user.role & 2) {
+        navigate('/worker')
+      } else {
+        navigate('/')
+      }
     } catch (exception) {
       setErrorMessage('wrong credentials')
       setTimeout(() => {

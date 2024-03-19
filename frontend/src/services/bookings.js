@@ -11,4 +11,13 @@ const getWorkerWithLeastBookings = async (workers) => {
   return response.data
 }
 
-export default { getAll, getWorkerWithLeastBookings }
+const createBooking = async (bookingData) => {
+  try {
+    const response = await axios.post('/api/bookings', bookingData)
+    console.log('Booking created:', response.data)
+  } catch (error) {
+    console.error('Error creating booking:', error.response.data)
+  }
+}
+
+export default { getAll, getWorkerWithLeastBookings, createBooking }

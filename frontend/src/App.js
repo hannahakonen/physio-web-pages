@@ -15,6 +15,7 @@ import Notes from './components/Notes'
 import { useNavigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import Calendar from './components/Calendar'
+import WorkerPage from './components/WorkerPage'
 
 const App = (props) => {
   const [notes, setNotes] = useState([])
@@ -70,6 +71,7 @@ const App = (props) => {
         <Route path="/notes" element={<Notes user={user} />} />
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login onLogin={login} />} />
+        <Route path="/worker" element={<WorkerPage user={user} />} />
       </Routes>
 
       <div className="App">

@@ -5,14 +5,15 @@ const bookingSchema = new mongoose.Schema({
   service: String,
   start: Date,
   end: Date,
+  duration: Number,
+  price: Number,
   worker: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   },
   customer: {
-    firstName: String,
-    lastName: String,
-    email: String
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
   }
 })
 

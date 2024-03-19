@@ -387,6 +387,7 @@ async function addSpecificServicesToUser() {
 addSpecificServicesToUser()
 */
 
+/*
 const userId = '65eb000a06cdcb9bed6cde0a'
 const worktimeId = '65f1b5c60bc2b8be9e750f9e'
 
@@ -401,5 +402,70 @@ User.findByIdAndUpdate(
   })
   .catch(error => {
     // Handle error
+    console.error(error)
+  })
+
+*/
+/*
+const userId = '65f7e279ddb742a382957ebe'
+const bookingId = '65d75a8344351bf1c6c3fa10' // replace with your booking id
+
+User.findByIdAndUpdate(
+  userId,
+  { $push: { bookings: bookingId } },
+  { new: true, useFindAndModify: false }
+)
+  .then(updatedUser => {
+    // Handle success
+    console.log(updatedUser)
+  })
+  .catch(error => {
+    // Handle error
+    console.error(error)
+  })
+*/
+
+/*
+const booking1Id = '65d71a0894a282c0ec900a4f' // replace with your booking id
+const booking2Id = '65d71d8a8f188220cafa00f5' // replace with your booking id
+const booking3Id = '65d7202c1244799e3b7fa1fb' // replace with your booking id
+const booking4Id = '65d75a8344351bf1c6c3fa10' // replace with your booking id
+
+Promise.all([
+  Booking.findByIdAndUpdate(booking1Id, { $set: { customer: '65f7eb65ddb742a382957ebf' } }, { new: true, useFindAndModify: false }),
+  Booking.findByIdAndUpdate(booking2Id, { $set: { customer: '65f7e279ddb742a382957ebe' } }, { new: true, useFindAndModify: false }),
+  Booking.findByIdAndUpdate(booking3Id, { $set: { customer: '65f7e279ddb742a382957ebe' } }, { new: true, useFindAndModify: false }),
+  Booking.findByIdAndUpdate(booking4Id, { $set: { customer: '65f7e279ddb742a382957ebe' } }, { new: true, useFindAndModify: false }),
+])
+  .then(updatedBookings => {
+    // Handle success
+    console.log(updatedBookings)
+  })
+  .catch(error => {
+    // Handle error
+    console.error(error)
+  })
+  */
+
+/*
+User.updateMany(
+  {},
+  { $set: { emailList: false, smsList: false } },
+)
+  .then(result => {
+    console.log(result)
+  })
+  .catch(error => {
+    console.error(error)
+  })
+*/
+Booking.updateMany(
+  {},
+  { $set: { duration: 60, price: 64 } },
+)
+  .then(result => {
+    console.log(result)
+  })
+  .catch(error => {
     console.error(error)
   })

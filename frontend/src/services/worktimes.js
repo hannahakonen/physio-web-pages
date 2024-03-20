@@ -21,4 +21,9 @@ const removeWorktime = async (id) => {
   return response.data
 }
 
-export default { getAll, getWorktimesByWorkers, getWorktimesByWorker, removeWorktime }
+const addWorktime = async (newWorktime, username) => {
+  const response = await axios.post(`${baseUrl}/workers/${username}`, newWorktime)
+  return response.data
+}
+
+export default { getAll, getWorktimesByWorkers, getWorktimesByWorker, removeWorktime, addWorktime }

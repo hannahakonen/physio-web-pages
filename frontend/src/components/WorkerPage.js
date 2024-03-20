@@ -65,11 +65,20 @@ const WorkerPage = ({ user }) => {
       })
   }
 
+  const handleAddWorktime = (newWorktime, username) => {
+    console.log('Adding worktime:', newWorktime)
+    worktimeServices
+      .addWorktime(newWorktime, username)
+      .then(returnedWorktime => {
+        setWorktimes(worktimes.concat(returnedWorktime))
+      })
+  }
+
   return (
     <div className="App">
       <header className="App-header">
         <h1>Welcome, {user ? user.firstName : 'Guest'}</h1>
-        <OwnWorktimes user={user} worktimes={worktimes} handleRemoveWorktime={handleRemoveWorktime}/>
+        <OwnWorktimes user={user} worktimes={worktimes} handleRemoveWorktime={handleRemoveWorktime} handleAddWorktime={handleAddWorktime} />
         <OwnBookings user={user} bookings={bookings} handleRemoveBooking={handleRemoveBooking}/>
         <OwnServices user={user} services={services} handleRemoveService={handleRemoveService}/>
       </header>
@@ -77,13 +86,41 @@ const WorkerPage = ({ user }) => {
   )
 }
 
-const OwnWorktimes = ({ user, worktimes, handleRemoveWorktime }) => {
-  // Add functionality for changing worktimes here
+const OwnWorktimes = ({ user, worktimes, handleRemoveWorktime, handleAddWorktime }) => {
+  const [start, setStart] = useState('')
+  const [end, setEnd] = useState('')
+
+  const handleSubmit = (event) => {
+    event.preventDefault()
+
+    const newWorktime = {
+      start: new Date(start),
+      end: new Date(end),
+    }
+
+    handleAddWorktime(newWorktime, user.username)
+
+    setStart('')
+    setEnd('')
+  }
+
 
   worktimes.sort((a, b) => new Date(a.start) - new Date(b.start))
+
   return (
     <div>
       <h2>Työajat</h2>
+      <form onSubmit={handleSubmit}>
+        <label>
+          Alkaa:
+          <input type="datetime-local" value={start} onChange={(e) => setStart(e.target.value)} required />
+        </label>
+        <label>
+          Loppuu:
+          <input type="datetime-local" value={end} onChange={(e) => setEnd(e.target.value)} required />
+        </label>
+        <button type="submit">Lisää</button>
+      </form>
       {worktimes.map((worktime, index) => (
         <div key={index}>
           {new Date(worktime.start).getDate()}.{new Date(worktime.start).getMonth() + 1}.{new Date(worktime.start).getFullYear()} {new Date(worktime.start).getHours()}:{new Date(worktime.start).getMinutes().toString().padStart(2, '0')}

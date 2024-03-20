@@ -51,4 +51,28 @@ worktimesRouter.delete('/:id', async (request, response) => {
   }
 })
 
+// add worktime to worktimes and user's worktimes
+worktimesRouter.post('/workers/:username', async (request, response) => {
+  const { start, end } = request.body
+  const worker = await Worker.findOne({ username: request.params.username })
+
+  if (!worker) {
+    return response.status(404).json({ error: 'Worker not found' })
+  }
+
+  const newWorktime = new Worktime({
+    start: new Date(start),
+    end: new Date(end),
+    worker: worker._id
+  })
+
+  const savedWorktime = await newWorktime.save()
+
+  // Add the new worktime's ID to the worker's worktimes array
+  await Worker.findByIdAndUpdate(worker._id, { $push: { worktimes: savedWorktime._id } })
+
+  response.status(201).json(savedWorktime)
+})
+
+
 module.exports = worktimesRouter

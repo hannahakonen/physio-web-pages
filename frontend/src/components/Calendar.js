@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import worktimeService from '../services/worktimes'
 import bookingService from '../services/bookings'
-import Day from './Day'
+import WorkerSelection from './WorkerSelection'
+import WeekView from './WeekView'
 
 const Calendar = ({ onSelect, onWorkerSelect, workers, onBackTwo, totalDuration, worker }) => {
   const [startDate, setStartDate] = useState(new Date())
@@ -77,66 +78,5 @@ const Calendar = ({ onSelect, onWorkerSelect, workers, onBackTwo, totalDuration,
     </div>
   )
 }
-
-// TO DO: names/photos of workers from DB according to the selected service
-// TO DO: onCLick: setSelectedWorker selected, worker's times shown
-const WorkerSelection = ({ onSelect, workers }) => {
-  //const workers = ['Kuka tahansa', 'Laura', 'Mikko']
-  const allWorkers = [...workers, { username: 'anyone', firstName: 'Kuka tahansa' }]
-  return (
-    <div>
-      {workers.length > 0 ? (
-        allWorkers.map((worker, i) => (
-          worker.firstName ? (
-            <button key={i} onClick={() => onSelect(worker)}>
-              {worker.firstName}
-            </button>
-          ) : null
-        ))
-      ) : (
-        <p>No workers available</p>
-      )}
-    </div>
-  )
-}
-
-const WeekView = ({ startDate, worktimes, bookings, onSelect, totalDuration, worker }) => {
-  // Generate an array of dates for the week
-  const dates = Array.from({ length: 7 }, (v, i) => {
-    const date = new Date(startDate)
-    date.setDate(date.getDate() + i)
-    return date
-  })
-
-  const weekdays = ['MA', 'TI', 'KE', 'TO', 'PE', 'LA', 'SU']
-  // For simplicity, just use a static list of times
-  //const times = ['9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00']
-
-  return (
-    <div>
-      <table>
-        <thead>
-          <tr>
-            {weekdays.map((weekday, i) => (
-              <th key={i}>{weekday}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            {dates.map(date => (
-              <td key={date.toString()}>
-                <Day date={date} worktimes={worktimes} bookings={bookings} totalDuration={totalDuration} onSelect={onSelect} worker={worker} />
-              </td>
-            ))}
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  )
-}
-
-
-
 
 export default Calendar

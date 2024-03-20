@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react'
 import Calendar from './Calendar'
 import serviceService from '../services/services'
 import bookingService from '../services/bookings'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-import CancelIcon from '@mui/icons-material/Cancel'
-
-
+import Summary from './Summary'
+import ServiceTypeSelection from './ServiceTypeSelection'
+import ServiceSelection from './ServiceSelection'
+import CustomerInfo from './CustomerInfo'
+import BookingCompleted from './BookingCompleted'
 
 const Booking = () => {
   const [step, setStep] = useState(0)
@@ -22,12 +23,7 @@ const Booking = () => {
     setServiceType(selectedServiceType)
     setStep(1)
   }
-  /*
-  const handleServiceSelection = selectedService => {
-    setService(selectedService)
-    setStep(2)
-  }
-*/
+
   const handleServiceSelection = (service) => {
     //console.log('Worker in Booking component:', worker)
     let newTotalPrice = totalPrice
@@ -100,14 +96,9 @@ const Booking = () => {
     setStep(step - 3)
   }
 
-  // TO DO: save to DB bookings
-  // TO DO: if saving to DB succeeds:
-  // TO DO: send email to customer and worker
   const handleBookingSubmission = (firstName, lastName, phone, email, additionalInfo) => {
-    // calculate the end time for the db
     const endTime = new Date(time)
     endTime.setMinutes(endTime.getMinutes() + totalDuration)
-    //let username=worker.username
     console.log('Booking completed:', { serviceType, service, time, endTime, totalDuration, totalPrice, worker, firstName, lastName, phone, email, additionalInfo  })
     bookingService.createBooking({ serviceType, service, time, endTime, totalDuration, totalPrice, worker, firstName, lastName, phone, email, additionalInfo })
     setStep(4)
@@ -121,174 +112,6 @@ const Booking = () => {
       {step === 2 && <Calendar onSelect={handleSlotSelection} onWorkerSelect={handleWorkerSelection} workers={workers} onBackTwo={handleBackTwo} totalDuration={totalDuration} worker={worker} />}
       {step === 3 && <CustomerInfo onSubmit={handleBookingSubmission} onBack={handleBack} onBackThree={handleBackThree} />}
       {step === 4 && <BookingCompleted onBackThree={handleBackThree} />}
-    </div>
-  )
-}
-
-const Summary = ({ selectedServices, onSelect, onRemoveService, totalPrice }) => {
-
-  return (
-    <div>
-      <h1>Summary</h1>
-      {selectedServices.length === 0 ? (
-        <p>Choose service</p>
-      ) : (
-        <>
-          {selectedServices.map((service, index) => (
-            <p key={index} onClick={() => onRemoveService(service)} style={{
-              cursor: 'pointer'
-            }}>
-            Service: {service.name} Alkaen {service.minPrice} €
-              <CancelIcon />
-            </p>
-          ))}
-          <p>Total: {totalPrice} €</p>
-        </>
-      )}
-      <div onClick={selectedServices.length > 0 ? onSelect : null} style={{ cursor: selectedServices.length > 0 ? 'pointer' : 'default' }}>
-        Select time
-      </div>
-    </div>
-  )
-}
-
-const ServiceTypeSelection = ({ onSelect }) => {
-  const [serviceTypes, setServiceTypes] = useState([])
-  //const serviceTypes = ['Fysioterapia', 'Klassinen hieronta', 'Kuumakivihieronta']
-
-  useEffect(() => {
-    serviceService.getAllTypes()
-      .then(initialServiceTypes => {
-        setServiceTypes(initialServiceTypes)
-      })
-  }, [])
-  // DO: Aika button not disabled if at least one service selected
-  // DO: Move links to booking?
-  return (
-    <div>
-      <button>Palvelu</button>
-      <button disabled>Aika</button>
-      <button disabled>Tiedot</button>
-      <button disabled>Valmis</button>
-      <h1>Select a Service Type</h1>
-      <div>
-        {serviceTypes.map((type, index) => (
-          <div
-            key={index}
-            onClick={() => onSelect(type)}
-            style={{
-              border: '1px solid #000',
-              borderRadius: '5px',
-              padding: '10px',
-              margin: '10px',
-              cursor: 'pointer'
-            }}
-          >
-            {type}
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-const ServiceSelection = ({ onSelect, serviceType, onBack, selectedServices }) => {
-  const [servicesByType, setServicesByType] = useState([])
-  /*
-  let services = []
-  if (serviceType === 'Fysioterapia') {
-    services = ['Fysioterapia 60 min']
-  } else if (serviceType === 'Klassinen hieronta') {
-    services = ['Klassinen hieronta 30 min', 'Klassinen hieronta 60 min', 'Klassinen hieronta 90 min']
-  } else if (serviceType === 'Kuumakivihieronta') {
-    services = ['Kuumakivihieronta 60 min']
-  }
-  */
-  useEffect(() => {
-    serviceService.getServicesByType(serviceType)
-      .then(service => {
-        console.log(service)
-        setServicesByType(service)
-      })
-  }, [serviceType])
-
-  const handleSelect = (service) => {
-    onSelect(service)
-  }
-  // DO: Aika button not disabled if at least one service selected
-  return (
-    <div>
-      <button>Palvelu</button>
-      <button disabled>Aika</button>
-      <button disabled>Tiedot</button>
-      <button disabled>Valmis</button>
-      <h1>Select a Service</h1>
-      <div>
-        <button onClick={onBack}>Valitse lisää palveluita</button>
-      </div>
-      <div>
-        {servicesByType.map((service, index) => (
-          <div
-            key={index}
-            onClick={() => handleSelect(service)}
-            style={{
-              border: '1px solid #000',
-              borderRadius: '5px',
-              padding: '10px',
-              margin: '10px',
-              cursor: 'pointer'
-            }}
-          >
-            {service.name} {service.minPrice} €
-            {selectedServices.some(selectedService => selectedService.name === service.name) && <CheckCircleIcon onClick={() => onSelect(service)} />}
-            {service.description && <p style={{ fontSize: '13px' }}>{service.description}</p>}
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-const CustomerInfo = ({ onSubmit, onBack, onBackThree }) => {
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [phone, setPhone] = useState('')
-  const [email, setEmail] = useState('')
-  const [additionalInfo, setAdditionalInfo] = useState('')
-
-  const handleSubmit = (event) => {
-    event.preventDefault()
-    onSubmit(firstName, lastName, phone, email, additionalInfo)
-  }
-
-  return (
-    <div>
-      <button onClick={onBackThree}>Palvelu</button>
-      <button onClick={onBack}>Aika</button>
-      <button>Tiedot</button>
-      <button disabled>Valmis</button>
-      <h1>Enter Your Information</h1>
-      <form onSubmit={handleSubmit}>
-        <input type="text" placeholder="Etunimi" required onChange={e => setFirstName(e.target.value)} />
-        <input type="text" placeholder="Sukunimi" required onChange={e => setLastName(e.target.value)} />
-        <input type="text" placeholder="Puhelin" required onChange={e => setPhone(e.target.value)} />
-        <input type="email" placeholder="Sähköpostiosoite" required onChange={e => setEmail(e.target.value)} />
-        <input type="text" placeholder="Lisätiedot/erityistoiveet" onChange={e => setAdditionalInfo(e.target.value)} />
-
-        <button type="submit">Vahvista varaus</button>
-      </form>
-    </div>
-  )
-}
-
-const BookingCompleted = ({ onBackThree }) => {
-  return (
-    <div>
-      <button disabled>Palvelu</button>
-      <button disabled>Aika</button>
-      <button disabled>Tiedot</button>
-      <button>Valmis</button>
-      <h1>Booking completed!</h1>
     </div>
   )
 }

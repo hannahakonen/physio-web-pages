@@ -10,12 +10,18 @@ import NoteForm from './components/NoteForm'
 import Login from './components/LoginForm'
 import noteService from './services/notes'
 import loginService from './services/login'
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { Link as RouterLink } from 'react-router-dom'
 import Notes from './components/Notes'
 import { useNavigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import Calendar from './components/Calendar'
 import WorkerPage from './components/WorkerPage'
+import { AppBar, Button, Container, Toolbar, Typography, Box, IconButton } from '@mui/material'
+import MenuIcon from '@mui/icons-material/Menu'
+import { Drawer, List, ListItem } from '@mui/material'
+import { useMediaQuery } from '@mui/material'
+import { useTheme } from '@mui/material/styles'
 
 const App = (props) => {
   const [notes, setNotes] = useState([])
@@ -25,6 +31,15 @@ const App = (props) => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [loginVisible, setLoginVisible] = useState(false)
+
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+
+  const [drawerOpen, setDrawerOpen] = useState(false)
+
+  const handleDrawerToggle = () => {
+    setDrawerOpen(!drawerOpen)
+  }
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
@@ -50,21 +65,56 @@ const App = (props) => {
   }
 
   return (
-    <div>
-      <div>
-        <Link style={padding} to="/">Koti</Link>
-        <Link style={padding} to="/ajanvaraus">Ajanvaraus</Link>
-        <Link style={padding} to="/notes">Notes</Link>
-        {user
-          ? (
-            <>
-              <Link style={padding} to="/worker">{user.firstName}</Link>
-              <Link style={padding} to="/" onClick={handleLogout}>Logout</Link>
-            </>
-          )
-          : <Link style={padding} to="/login">Login</Link>
-        }
-      </div>
+    <div className="App">
+      <Box sx={{ flexGrow: 1 }}>
+        <AppBar position="static" sx={{ backgroundColor: 'rgb(114, 98, 130)' }}>
+          <Toolbar>
+            {isMobile ? (
+              <>
+                <IconButton
+                  size="large"
+                  edge="start"
+                  color="inherit"
+                  aria-label="menu"
+                  sx={{ mr: 2 }}
+                  onClick={handleDrawerToggle}
+                >
+                  <MenuIcon />
+                </IconButton>
+                <Drawer
+                  anchor="left"
+                  open={drawerOpen}
+                  onClose={handleDrawerToggle}
+                >
+                  <List>
+                    <ListItem button component={RouterLink} to="/" onClick={handleDrawerToggle}>Koti</ListItem>
+                    <ListItem button component={RouterLink} to="/ajanvaraus" onClick={handleDrawerToggle}>Ajanvaraus</ListItem>
+                    <ListItem button component={RouterLink} to="/notes" onClick={handleDrawerToggle}>Notes</ListItem>
+                  </List>
+                </Drawer>
+              </>
+            ) : (
+              <>
+                <Button color="inherit" component={RouterLink} to="/">Koti</Button>
+                <Button color="inherit" component={RouterLink} to="/ajanvaraus">Ajanvaraus</Button>
+                <Button color="inherit" component={RouterLink} to="/notes">Notes</Button>
+              </>
+            )}
+
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} />
+
+
+            {user
+              ? (
+                <>
+                  <Button color="inherit" component={RouterLink} to="/worker">{user.firstName}</Button>
+                  <Button color="inherit" component={RouterLink} to="/" onClick={handleLogout}>Logout</Button>
+                </>
+              )
+              : <Button color="inherit" component={RouterLink} to="/login">Login</Button>}
+          </Toolbar>
+        </AppBar>
+      </Box>
 
       <Routes>
         <Route path="/ajanvaraus" element={<Booking />} />
@@ -73,7 +123,6 @@ const App = (props) => {
         <Route path="/login" element={<Login onLogin={login} />} />
         <Route path="/worker" element={<WorkerPage user={user} />} />
       </Routes>
-
       <div className="App">
         <Footer />
       </div>

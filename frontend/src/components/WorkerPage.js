@@ -77,7 +77,6 @@ const WorkerPage = ({ user }) => {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Welcome, {user ? user.firstName : 'Guest'}</h1>
         <OwnWorktimes user={user} worktimes={worktimes} handleRemoveWorktime={handleRemoveWorktime} handleAddWorktime={handleAddWorktime} />
         <OwnBookings user={user} bookings={bookings} handleRemoveBooking={handleRemoveBooking}/>
         <OwnServices user={user} services={services} handleRemoveService={handleRemoveService}/>
@@ -115,10 +114,12 @@ const OwnWorktimes = ({ user, worktimes, handleRemoveWorktime, handleAddWorktime
           Alkaa:
           <input type="datetime-local" value={start} onChange={(e) => setStart(e.target.value)} required />
         </label>
+        <br />
         <label>
           Loppuu:
           <input type="datetime-local" value={end} onChange={(e) => setEnd(e.target.value)} required />
         </label>
+        <br />
         <button type="submit">Lisää</button>
       </form>
       {worktimes.map((worktime, index) => (

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import serviceService from '../services/services'
+import services from '../services/services'
 
 const ServiceSelection = ({ onSelect, serviceType, onBack, selectedServices }) => {
   const [servicesByType, setServicesByType] = useState([])
@@ -25,6 +26,10 @@ const ServiceSelection = ({ onSelect, serviceType, onBack, selectedServices }) =
   const handleSelect = (service) => {
     onSelect(service)
   }
+
+  //sort
+  servicesByType.sort((a, b) => a.minPrice - b.minPrice)
+
   // DO: Aika button not disabled if at least one service selected
   return (
     <div>

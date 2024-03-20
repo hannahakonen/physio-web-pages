@@ -26,4 +26,9 @@ const createBooking = async (bookingData) => {
   }
 }
 
-export default { getAll, getWorkerWithLeastBookings, createBooking, getBookingsByWorker }
+const removeBooking = async (id) => {
+  const response = await axios.delete(`${baseUrl}/${id}`)
+  return response.data
+}
+
+export default { getAll, getWorkerWithLeastBookings, createBooking, getBookingsByWorker, removeBooking }

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import serviceServices from '../services/services'
 import worktimeServices from '../services/worktimes'
 import bookingServices from '../services/bookings'
+import CancelIcon from '@mui/icons-material/Cancel'
 
 const WorkerPage = ({ user }) => {
   // Add functionality for changing worktimes, bookings, and services here
@@ -37,62 +38,150 @@ const WorkerPage = ({ user }) => {
       })
   }, [user])
 
+  const handleRemoveWorktime = (worktime) => {
+    console.log('Removing worktime:', worktime)
+    worktimeServices
+      .removeWorktime(worktime._id)
+      .then(() => {
+        setWorktimes(worktimes.filter(w => w._id !== worktime._id))
+      })
+  }
+
+  const handleRemoveBooking = (booking) => {
+    console.log('Removing booking:', booking)
+    bookingServices
+      .removeBooking(booking._id)
+      .then(() => {
+        setBookings(bookings.filter(b => b._id !== booking._id))
+      })
+  }
+
+  const handleRemoveService = (service, username) => {
+    console.log('Removing service:', service)
+    serviceServices
+      .removeServiceFromWorker(service._id, username)
+      .then(() => {
+        setServices(services.filter(s => s._id !== service._id))
+      })
+  }
+
   return (
     <div className="App">
       <header className="App-header">
         <h1>Welcome, {user ? user.firstName : 'Guest'}</h1>
-        <OwnWorktimes user={user} worktimes={worktimes} />
-        <OwnBookings user={user} bookings={bookings} />
-        <OwnServices user={user} services={services} />
+        <OwnWorktimes user={user} worktimes={worktimes} handleRemoveWorktime={handleRemoveWorktime}/>
+        <OwnBookings user={user} bookings={bookings} handleRemoveBooking={handleRemoveBooking}/>
+        <OwnServices user={user} services={services} handleRemoveService={handleRemoveService}/>
       </header>
     </div>
   )
 }
 
-const OwnWorktimes = ({ user, worktimes }) => {
+const OwnWorktimes = ({ user, worktimes, handleRemoveWorktime }) => {
   // Add functionality for changing worktimes here
 
+  worktimes.sort((a, b) => new Date(a.start) - new Date(b.start))
   return (
     <div>
       <h2>Työajat</h2>
       {worktimes.map((worktime, index) => (
         <div key={index}>
-          {worktime.start} - {worktime.end}
+          {new Date(worktime.start).getDate()}.{new Date(worktime.start).getMonth() + 1}.{new Date(worktime.start).getFullYear()} {new Date(worktime.start).getHours()}:{new Date(worktime.start).getMinutes().toString().padStart(2, '0')}
+          -{new Date(worktime.end).getHours()}:{new Date(worktime.end).getMinutes().toString().padStart(2, '0')}
+          <CancelIcon  onClick={() => handleRemoveWorktime(worktime)} style={{ cursor: 'pointer' }}/>
         </div>
       ))}
     </div>
   )
 }
 
-const OwnBookings = ({ user, bookings }) => {
-
+const OwnBookings = ({ user, bookings, handleRemoveBooking }) => {
+  bookings.sort((a, b) => new Date(a.start) - new Date(b.start))
   return (
     <div>
       <h2>Varaukset</h2>
-      {bookings.map((booking, index) => (
-        <div key={index}>
-          {booking.start} - {booking.end}
-        </div>
-      ))}
+      <table>
+        <thead>
+          <tr>
+            <th>Päivä</th>
+            <th>Aika</th>
+            <th>Nimi</th>
+            <th>Sähköposti</th>
+            <th>Puhelin</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {bookings.map((booking, index) => {
+            const startDate = new Date(booking.start)
+            const endDate = new Date(booking.end)
+            return (
+              <tr key={index}>
+                <td>{`${startDate.getDate()}.${startDate.getMonth() + 1}.${startDate.getFullYear()}`}</td>
+                <td>{`${startDate.getHours()}:${startDate.getMinutes().toString().padStart(2, '0')}`}
+                -{`${endDate.getHours()}:${endDate.getMinutes().toString().padStart(2, '0')}`}</td>
+                <td>{booking.customer.firstName} {booking.customer.lastName}</td>
+                <td>{booking.customer.email}</td>
+                <td>{booking.customer.phone}</td>
+                <td><CancelIcon onClick={() => handleRemoveBooking(booking)} style={{ cursor: 'pointer' }}/></td>
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
     </div>
   )
 }
 
-const OwnServices = ({ user, services }) => {
-  // Add functionality for changing services here
+const OwnServices = ({ user, services, handleRemoveService }) => {
+  const [sortedServices, setSortedServices] = useState([services])
+
+  // Sort the services in ascending order first by type and types by the price
+  useEffect(() => {
+    const sorted = [...services].sort((a, b) => {
+      // Sort by type
+      if (a.type < b.type) return -1
+      if (a.type > b.type) return 1
+
+      // If types are equal, sort by price
+      if (a.priceByWorker < b.priceByWorker) return -1
+      if (a.priceByWorker > b.priceByWorker) return 1
+
+      return 0
+    })
+
+    setSortedServices(sorted)
+  }, [services])
 
   return (
     <div>
       <h2>Palvelut</h2>
-      {services.map((service, index) => (
-        <div key={index}>
-          {service.name} {service.duration} min
-        </div>
-      ))}
+      <table>
+        <thead>
+          <tr>
+            <th>Tyyppi</th>
+            <th>Palvelu</th>
+            <th>Kesto</th>
+            <th>Hinta</th>
+            <th>Kuvaus</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {sortedServices.map((service, index) => (
+            <tr key={index}>
+              <td>{service.type}</td>
+              <td>{service.name}</td>
+              <td>{`${service.duration} min`}</td>
+              <td>{`${service.priceByWorker} €`}</td>
+              <td>{service.description}</td>
+              <td><CancelIcon  onClick={() => handleRemoveService(service, user.username)} style={{ cursor: 'pointer' }}/></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   )
 }
-
-
 
 export default WorkerPage

@@ -17,4 +17,9 @@ const getServicesByWorker = async (worker) => {
   return response.data
 }
 
-export default { getAllTypes, getServicesByType, getServicesByWorker }
+const removeServiceFromWorker = async (id, worker) => {
+  const response = await axios.delete(`${baseUrl}/${id}/${worker}`)
+  return response.data
+}
+
+export default { getAllTypes, getServicesByType, getServicesByWorker, removeServiceFromWorker }

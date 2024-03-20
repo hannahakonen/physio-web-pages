@@ -9,7 +9,14 @@ bookingsRouter.get('/', async (request, response) => {
 })
 
 bookingsRouter.get('/workers/:username', async (request, response) => {
-  const worker = await User.findOne({ username: request.params.username }).populate('bookings')
+  const worker = await User.findOne({ username: request.params.username })
+    .populate({
+      path: 'bookings',
+      populate: {
+        path: 'customer',
+        select: 'firstName lastName email phone'
+      }
+    })
 
   if (!worker) {
     return response.status(404).json({ error: 'worker not found' })
@@ -81,6 +88,34 @@ bookingsRouter.post('/', async (request, response) => {
   } catch (error) {
     await session.abortTransaction()
     response.status(400).json({ error: error.message })
+  } finally {
+    session.endSession()
+  }
+})
+
+bookingsRouter.delete('/:id', async (request, response) => {
+  const { id } = request.params
+  const session = await mongoose.startSession()
+
+  try {
+    session.startTransaction()
+    const booking = await Booking.findByIdAndRemove(id).session(session)
+
+    if (!booking) {
+      throw new Error('Booking not found')
+    }
+
+    await User.updateMany(
+      { bookings: id },
+      { $pull: { bookings: id } },
+      { session }
+    )
+
+    await session.commitTransaction()
+    response.status(204).end()
+  } catch (error) {
+    await session.abortTransaction()
+    response.status(400).send({ error: 'malformatted id' })
   } finally {
     session.endSession()
   }

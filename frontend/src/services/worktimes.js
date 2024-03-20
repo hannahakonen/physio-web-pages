@@ -16,4 +16,9 @@ const getWorktimesByWorker = async (worker) => {
   return response.data
 }
 
-export default { getAll, getWorktimesByWorkers, getWorktimesByWorker }
+const removeWorktime = async (id) => {
+  const response = await axios.delete(`${baseUrl}/${id}`)
+  return response.data
+}
+
+export default { getAll, getWorktimesByWorkers, getWorktimesByWorker, removeWorktime }

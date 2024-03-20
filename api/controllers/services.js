@@ -1,6 +1,8 @@
 const servicesRouter = require('express').Router()
 const Service = require('../models/service')
 const User = require('../models/user')
+const { default: mongoose } = require('mongoose')
+
 
 servicesRouter.get('/', async (request, response) => {
   const services = await Service.find({}).populate('workers', { username: 1, firstName: 1 })
@@ -73,7 +75,56 @@ servicesRouter.get('/workers/:username', async (request, response) => {
     return response.status(404).json({ error: 'worker not found' })
   }
 
-  response.json(worker.services)
+  const servicesWithWorkerPrice = worker.services.map(service => {
+    const priceByWorker = service.priceByWorker.find(price => price.worker.toString() === worker._id.toString())
+    return {
+      ...service._doc,
+      priceByWorker: priceByWorker ? priceByWorker.price : null
+    }
+  })
+
+  response.json(servicesWithWorkerPrice)
+})
+
+servicesRouter.delete('/:serviceId/:workerUsername', async (request, response) => {
+  const { serviceId, workerUsername } = request.params
+  const session = await mongoose.startSession()
+
+  try {
+    session.startTransaction()
+
+    // Find the worker by their username
+    const worker = await User.findOne({ username: workerUsername }).session(session)
+
+    if (!worker) {
+      throw new Error('Worker not found')
+    }
+
+    const service = await Service.findById(serviceId).session(session)
+
+    if (!service) {
+      throw new Error('Service not found')
+    }
+
+    // Remove the price and worker object from priceByWorker
+    service.priceByWorker = service.priceByWorker.filter(priceByWorker => priceByWorker.worker.toString() !== worker._id.toString())
+    await service.save({ session })
+
+    // Remove the service from the services field of the user document
+    await User.updateOne(
+      { _id: worker._id, services: serviceId },
+      { $pull: { services: serviceId } },
+      { session }
+    )
+
+    await session.commitTransaction()
+    response.status(204).end()
+  } catch (error) {
+    await session.abortTransaction()
+    response.status(400).send({ error: 'malformatted id' })
+  } finally {
+    session.endSession()
+  }
 })
 
 module.exports = servicesRouter

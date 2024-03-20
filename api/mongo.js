@@ -459,6 +459,7 @@ User.updateMany(
     console.error(error)
   })
 */
+/*
 Booking.updateMany(
   {},
   { $set: { duration: 60, price: 64 } },
@@ -469,3 +470,45 @@ Booking.updateMany(
   .catch(error => {
     console.error(error)
   })
+  */
+
+/*
+const userId = '65f7e279ddb742a382957ebe'
+const bookingId = '65d7202c1244799e3b7fa1fb' // replace with your booking id
+
+User.findByIdAndUpdate(
+  userId,
+  { $pull: { bookings: bookingId } },
+  { new: true, useFindAndModify: false }
+)
+  .then(updatedUser => {
+    // Handle success
+    console.log(updatedUser)
+  })
+  .catch(error => {
+    // Handle error
+    console.error(error)
+  })
+*/
+
+//add a price 56 and worker 65eaff6db22b4f0a35a744d8 object to priceByWorker of service 65eb322da172693c1b1378f0
+const userId = '65eaff6db22b4f0a35a744d8' // replace with the actual ID
+const serviceId = '65e5d73066af96d0a343c4c3' // replace with the actual IDs
+const price = 41
+
+Service.findByIdAndUpdate(
+  serviceId,
+  { $push: { priceByWorker: { worker: userId, price: price } } },
+  { new: true, useFindAndModify: false }
+)
+  .then(updatedService => {
+    // Handle success
+    console.log(updatedService)
+  })
+  .catch(error => {
+    // Handle error
+    console.error(error)
+  })
+
+
+

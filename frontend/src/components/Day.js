@@ -199,7 +199,7 @@ const Day = ({ date, worktimes, bookings, totalDuration, onSelect, worker }) => 
       <div>{date.getDate()}.{date.getMonth() + 1}.</div>
       {slots.map((slot, i) => (
         <><button key={i} onClick={() => onSelect(slot)}>
-          {new Date(slot.date).getHours()}:{new Date(slot.date).getMinutes()}
+          {new Date(slot.date).getHours()}:{new Date(slot.date).getMinutes().toString().padStart(2, '0')}
         </button>
         <br></br>
         </>

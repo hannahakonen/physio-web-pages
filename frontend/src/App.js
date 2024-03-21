@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import Calendar from './components/Calendar'
 import WorkerPage from './components/WorkerPage'
+import Services from './components/Services'
 import { AppBar, Button, Container, Toolbar, Typography, Box, IconButton } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import { Drawer, List, ListItem } from '@mui/material'
@@ -89,6 +90,7 @@ const App = (props) => {
                   <List>
                     <ListItem button component={RouterLink} to="/" onClick={handleDrawerToggle}>Koti</ListItem>
                     <ListItem button component={RouterLink} to="/ajanvaraus" onClick={handleDrawerToggle}>Ajanvaraus</ListItem>
+                    <ListItem button component={RouterLink} to="/palvelut" onClick={handleDrawerToggle}>Palvelut</ListItem>
                     <ListItem button component={RouterLink} to="/notes" onClick={handleDrawerToggle}>Notes</ListItem>
                   </List>
                 </Drawer>
@@ -97,6 +99,7 @@ const App = (props) => {
               <>
                 <Button color="inherit" component={RouterLink} to="/">Koti</Button>
                 <Button color="inherit" component={RouterLink} to="/ajanvaraus">Ajanvaraus</Button>
+                <Button color="inherit" component={RouterLink} to="/palvelut">Palvelut</Button>
                 <Button color="inherit" component={RouterLink} to="/notes">Notes</Button>
               </>
             )}
@@ -118,6 +121,7 @@ const App = (props) => {
 
       <Routes>
         <Route path="/ajanvaraus" element={<Booking />} />
+        <Route path="/palvelut" element={<Services />} />
         <Route path="/notes" element={<Notes user={user} />} />
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login onLogin={login} />} />

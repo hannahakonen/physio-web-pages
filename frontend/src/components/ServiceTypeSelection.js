@@ -19,7 +19,7 @@ const ServiceTypeSelection = ({ onSelect }) => {
       <button disabled>Aika</button>
       <button disabled>Tiedot</button>
       <button disabled>Valmis</button>
-      <h1>Select a Service Type</h1>
+      <h1>Valitse palvelu</h1>
       <div>
         {serviceTypes.map((type, index) => (
           <div

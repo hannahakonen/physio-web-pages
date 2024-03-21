@@ -18,7 +18,7 @@ const CustomerInfo = ({ onSubmit, onBack, onBackThree }) => {
       <button onClick={onBack}>Aika</button>
       <button>Tiedot</button>
       <button disabled>Valmis</button>
-      <h1>Enter Your Information</h1>
+      <h1>Lisää tietosi</h1>
       <form onSubmit={handleSubmit}>
         <input type="text" placeholder="Etunimi" required onChange={e => setFirstName(e.target.value)} />
         <input type="text" placeholder="Sukunimi" required onChange={e => setLastName(e.target.value)} />

@@ -5,7 +5,7 @@ const BookingCompleted = ({ onBackThree }) => {
       <button disabled>Aika</button>
       <button disabled>Tiedot</button>
       <button>Valmis</button>
-      <h1>Booking completed!</h1>
+      <h1>Varaus vahvistettu!</h1>
     </div>
   )
 }

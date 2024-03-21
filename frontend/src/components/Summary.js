@@ -4,7 +4,7 @@ const Summary = ({ selectedServices, onSelect, onRemoveService, totalPrice }) =>
 
   return (
     <div>
-      <h1>Summary</h1>
+      <h1>Yhteenveto</h1>
       {selectedServices.length === 0 ? (
         <p>Choose service</p>
       ) : (

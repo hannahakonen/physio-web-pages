@@ -24,7 +24,7 @@ const WeekView = ({ startDate, worktimes, bookings, onSelect, totalDuration, wor
         <tbody>
           <tr>
             {dates.map(date => (
-              <td key={date.toString()}>
+              <td key={date.toString()} style={{ verticalAlign: 'top' }}>
                 <Day date={date} worktimes={worktimes} bookings={bookings} totalDuration={totalDuration} onSelect={onSelect} worker={worker} />
               </td>
             ))}

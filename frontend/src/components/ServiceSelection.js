@@ -37,7 +37,7 @@ const ServiceSelection = ({ onSelect, serviceType, onBack, selectedServices }) =
       <button disabled>Aika</button>
       <button disabled>Tiedot</button>
       <button disabled>Valmis</button>
-      <h1>Select a Service</h1>
+      <h1>Valitse palvelu</h1>
       <div>
         <button onClick={onBack}>Valitse lisää palveluita</button>
       </div>

@@ -21,11 +21,15 @@ const CustomerInfo = ({ onSubmit, onBack, onBackThree }) => {
       <h1>Lisää tietosi</h1>
       <form onSubmit={handleSubmit}>
         <input type="text" placeholder="Etunimi" required onChange={e => setFirstName(e.target.value)} />
+        <br></br>
         <input type="text" placeholder="Sukunimi" required onChange={e => setLastName(e.target.value)} />
+        <br></br>
         <input type="text" placeholder="Puhelin" required onChange={e => setPhone(e.target.value)} />
+        <br></br>
         <input type="email" placeholder="Sähköpostiosoite" required onChange={e => setEmail(e.target.value)} />
+        <br></br>
         <input type="text" placeholder="Lisätiedot/erityistoiveet" onChange={e => setAdditionalInfo(e.target.value)} />
-
+        <br></br>
         <button type="submit">Vahvista varaus</button>
       </form>
     </div>

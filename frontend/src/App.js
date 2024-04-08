@@ -1,5 +1,5 @@
 import './App.css'
-import { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Home from './components/Home'
 import Booking from './components/Booking'
 import Note from './components/Note'
@@ -18,11 +18,13 @@ import PropTypes from 'prop-types'
 import Calendar from './components/Calendar'
 import WorkerPage from './components/WorkerPage'
 import Services from './components/Services'
-import { AppBar, Button, Container, Toolbar, Typography, Box, IconButton } from '@mui/material'
+import { AppBar, Button, Container, Toolbar, Typography, Box, IconButton, Grid } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import { Drawer, List, ListItem } from '@mui/material'
 import { useMediaQuery } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
+import CssBaseline from '@mui/material/CssBaseline'
+import { AddBoxOutlined } from '@material-ui/icons'
 
 const App = (props) => {
   const [notes, setNotes] = useState([])
@@ -66,8 +68,9 @@ const App = (props) => {
   }
 
   return (
-    <div className="App">
-      <Box sx={{ flexGrow: 1 }}>
+    <React.Fragment>
+      <CssBaseline />
+      <div className="page-container">
         <AppBar position="static" sx={{ backgroundColor: 'rgb(114, 98, 130)' }}>
           <Toolbar>
             {isMobile ? (
@@ -104,7 +107,7 @@ const App = (props) => {
               </>
             )}
 
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} />
+            <Box sx={{ flexGrow: 1 }} />
 
 
             {user
@@ -117,20 +120,27 @@ const App = (props) => {
               : <Button color="inherit" component={RouterLink} to="/login">Login</Button>}
           </Toolbar>
         </AppBar>
-      </Box>
-
-      <Routes>
-        <Route path="/ajanvaraus" element={<Booking />} />
-        <Route path="/palvelut" element={<Services />} />
-        <Route path="/notes" element={<Notes user={user} />} />
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login onLogin={login} />} />
-        <Route path="/worker" element={<WorkerPage user={user} />} />
-      </Routes>
-      <div className="App">
+        <div className="content-container">
+          <Container>
+            <Grid container direction="column">
+              <Grid item xs={12} flexGrow={1} py={3}>
+                <Box maxWidth="md" margin="auto">
+                  <Routes>
+                    <Route path="/ajanvaraus" element={<Booking />} />
+                    <Route path="/palvelut" element={<Services />} />
+                    <Route path="/notes" element={<Notes user={user} />} />
+                    <Route path="/" element={<Home />} />
+                    <Route path="/login" element={<Login onLogin={login} />} />
+                    <Route path="/worker" element={<WorkerPage user={user} />} />
+                  </Routes>
+                </Box>
+              </Grid>
+            </Grid>
+          </Container>
+        </div>
         <Footer />
       </div>
-    </div>
+    </React.Fragment >
   )
 }
 

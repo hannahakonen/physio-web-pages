@@ -1,3 +1,26 @@
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: rgb(245, 237, 252)
+}
+
+.content-container {
+  flex: 1;
+}
+
+/*
+.root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-size: 1.5rem;
+}
+*/
+/*
+create-react-app, some changes
 .App {
   text-align: center;
 }
@@ -41,3 +64,4 @@
     transform: rotate(360deg);
   }
 }
+*/

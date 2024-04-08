@@ -7,6 +7,7 @@ import ServiceTypeSelection from './ServiceTypeSelection'
 import ServiceSelection from './ServiceSelection'
 import CustomerInfo from './CustomerInfo'
 import BookingCompleted from './BookingCompleted'
+import { Button } from '@mui/material'
 
 const Booking = () => {
   const [step, setStep] = useState(0)
@@ -105,7 +106,7 @@ const Booking = () => {
   }
 
   return (
-    <div className="App-header">
+    <div>
       {step === 0 && <ServiceTypeSelection onSelect={handleServiceTypeSelection} />}
       {step === 1 && <ServiceSelection onSelect={handleServiceSelection} serviceType={serviceType} onBack={handleBack} selectedServices={selectedServices} />}
       {(step === 0 || step === 1) && <Summary selectedServices={selectedServices} onSelect={handleChooseTime} onRemoveService={handleServiceSelection} totalPrice={totalPrice} />}

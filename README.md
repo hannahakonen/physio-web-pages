@@ -1,6 +1,6 @@
 # Introduction and Appointment Pages for Physiotherapist
 
-This project is based on https://fullstackopen.com. The MERN stack is used and the project is bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+The project using the MERN stack is based on https://fullstackopen.com and bootstrapped with [Create React App](https://github.com/facebook/create-react-app). 
 
 ## Available Scripts
 
